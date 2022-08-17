@@ -1,0 +1,46 @@
+body, html{
+  margin: 0px;
+  height: 100vh;
+}
+
+.neonText {
+  color: #fff;
+  text-shadow:
+      0 0 7px #fff,
+      0 0 10px #fff,
+      0 0 21px #fff,
+      0 0 42px #0fa,
+      0 0 82px #0fa,
+      0 0 92px #0fa,
+      0 0 102px #0fa,
+      0 0 151px #0fa;
+}
+
+.spinner-border {
+  width: 70px;
+  height: 70px;
+  display: block;
+  position: fixed;
+  top: calc(50% - (58px / 2));  
+  right: calc(50% - (58px / 2));
+  color: black;
+}
+
+#spinner-backdrop {
+  position:absolute;
+  top:0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  background-color: white;
+}
+
+#countdown-backdrop{
+  position: absolute;
+  top:0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
