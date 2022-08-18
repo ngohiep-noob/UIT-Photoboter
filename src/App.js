@@ -56,8 +56,8 @@ function App() {
       }));
       firstDrawRef.current = false;
       console.log("first draw");
+      console.log('first state',state.isLoading)
     }
-    
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     canvasCtx.drawImage(

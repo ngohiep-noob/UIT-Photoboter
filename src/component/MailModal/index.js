@@ -85,8 +85,8 @@ const Modal = ({ title = "Hello", footerBtn = "Send to my mail" }) => {
                     data-bs-dismiss="modal"
                     onClick={() => {
                       const email = e.includes("2152")
-                        ? e.split(" - ")[1]
-                        : e.split(" - ")[1] + "@gm.uit.edu.vn";
+                        ? e.split(" - ")[1] + "@gm.uit.edu.vn"
+                        : e.split(" - ")[1];
                       HandleSubmit(dispatch, context, email);
                     }}
                   >
