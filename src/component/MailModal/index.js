@@ -112,7 +112,7 @@ const Modal = ({ title = "Hello", footerBtn = "Send to my mail" }) => {
                 </label>
                 <input
                   type="text"
-                  className="form-control mb-5"
+                  className="form-control"
                   id="FormControlInput"
                   placeholder="this is your name"
                   ref={nameRef}

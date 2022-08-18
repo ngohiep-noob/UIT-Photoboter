@@ -38,7 +38,7 @@ const Toast = ({header, body, since}) => {
       >
         <div className="toast-header">
           <img
-            src="%PUBLIC_URL%/icon-info.png"
+            src="../../../icon-info.png"
             className="rounded me-2"
             alt="👀"
           />

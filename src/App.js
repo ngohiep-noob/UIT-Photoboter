@@ -41,8 +41,9 @@ function App() {
   });
 
   async function HandDetectionOnResults(results) {
-    canvasRef.current.width = screenSize.width;
-    canvasRef.current.height = screenSize.height;
+    // console.log(screenSize.current)
+    canvasRef.current.width = screenSize.current.width;
+    canvasRef.current.height = screenSize.current.height;
     // console.log(webCamRef.current.video.videoWidth, webCamRef.current.video.videoHeight)
     const canvasElement = canvasRef.current;
     const canvasCtx = canvasElement.getContext("2d");
@@ -112,11 +113,11 @@ function App() {
     const minSize = Math.min(w, h);
 
     if (minSize === w) {
-      screenSize.width = w;
-      screenSize.height = (3 / 4) * w;
+      screenSize.current.width = w;
+      screenSize.current.height = (3 / 4) * w;
     } else {
-      screenSize.height = h;
-      screenSize.width = h * (4 / 3);
+      screenSize.current.height = h;
+      screenSize.current.width = h * (4 / 3);
     }
 
     const hands = new Hands({
@@ -214,13 +215,14 @@ function App() {
             screenshotFormat="image/jpeg"
             screenshotQuality={1}
             style={{ visibility: "hidden" }}
+            className="position-absolute"
           />
 
           {/* canvas output */}
           <canvas
             ref={canvasRef}
             className={
-              screenSize.width ===
+              screenSize.current.width ===
               Math.min(window.innerWidth, window.innerHeight)
                 ? "position-fixed translate-middle-y top-50"
                 : "position-fixed translate-middle-x start-50"
