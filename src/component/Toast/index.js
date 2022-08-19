@@ -35,8 +35,9 @@ const Toast = ({header, body, since}) => {
         role="alert"
         aria-live="assertive"
         aria-atomic="true"
+        style={{borderRadius: 25}}
       >
-        <div className="toast-header">
+        <div className="toast-header" style={{borderRadius: 25}}>
           <img
             src={"./info-icon.png"}
             className="rounded me-2"

@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import HandleRecognize from "./HandleRecognize";
+import { ClearSleepTime } from "../../service/RedirectPage";
 
 const SnapShot = (props) => {
   const [times, setTimes] = useState(props.times);
-
-  const context = useContext(ProcessContextState);
+  const [show, setCountDownShow] = useState(false);
+  const context = useContext(ProcessContextState).current;
   const dispatch = useContext(ProcessContextDispatch);
 
   const CanvasToFile = () => {
@@ -16,20 +17,9 @@ const SnapShot = (props) => {
   };
 
   useEffect(() => {
+    console.log("countdown render!");
     // countdown before shotting.
-    let count = props.times - 1;
-    var intervalId = setInterval(() => {
-      if (count > 0) {
-        setTimes(count);
-        count--;
-      } else {
-        dispatch.setState((prev) => ({
-          ...prev,
-          isCountingDown: false,
-        }));
-        clearInterval(intervalId);
-      }
-    }, 1100);
+    dispatch.addContextDispatch(setCountDownShow, "setCountDownShow");
   }, []);
 
   useEffect(() => {
@@ -37,7 +27,7 @@ const SnapShot = (props) => {
       //send mail
       setTimeout(() => {
         dispatch.setFinalImageRef(CanvasToFile());
-        context.modalTrigger.show();
+        context.ToggleModal(true);
       }, 1100);
     } else if (times === 4) {
       //call api recognize
@@ -48,17 +38,37 @@ const SnapShot = (props) => {
   }, [times]);
 
   useEffect(() => {
-    console.log("re-render countdown component!");
+    if(show) {
+      ClearSleepTime(context.sleepIdRef.current)
+      let count = props.times - 1;
+      var intervalId = setInterval(() => {
+        if (count > 0) {
+          setTimes(count);
+          count--;
+        } else {
+          setCountDownShow(false);
+          clearInterval(intervalId);
+        }
+      }, 1100)
+    }
+  }, [show]) 
+
+  useEffect(() => {
+    console.log("countdown re-render!");
   });
 
   return (
-    <div id="countdown-backdrop">
-      <p
-        className="display-1 position-fixed top-50 start-50 translate-middle neonText"
-        style={{ fontSize: 150 }}
-      >
-        {times}
-      </p>
+    <div>
+      {show && (
+        <div id="countdown-backdrop">
+          <p
+            className="display-1 position-fixed top-50 start-50 translate-middle neonText"
+            style={{ fontSize: 150 }}
+          >
+            {times}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

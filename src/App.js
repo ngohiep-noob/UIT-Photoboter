@@ -4,27 +4,24 @@ import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import Webcam from "react-webcam";
 import { useRef, useEffect, useState, createContext } from "react";
 import React from "react";
-import { Hands } from "@mediapipe/hands";
-import { HAND_CONNECTIONS } from "@mediapipe/hands";
+import { Hands, HAND_CONNECTIONS } from "@mediapipe/hands";
 import isFiveTipsUp from "./service/CheckFingersUp";
 import Spinner from "./component/Spinner/index";
 import CountDownScreen from "./component/CountDown/index";
-import Toast from "./component/Toast/index";
-import ModalToSendEmail from "./component/MailModal/index";
+import Toast from "./component/Toast/index1";
+import ModalToSendEmail from "./component/MailModal/index1";
 import { ClearSleepTime, SetSleepTime } from "./service/RedirectPage";
 
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
-const bootstrap = require("bootstrap");
 
 function App() {
   const webCamRef = useRef(null);
   const canvasRef = useRef(null);
   const fiveTipsUpRef = useRef(false);
-  const inProcessRef = useRef(false);
   const isHandlingShooting = useRef(false);
   const finalImageRef = useRef("");
-  const recogizedImageRef = useRef('');
+  const recogizedImageRef = useRef("");
   const firstDrawRef = useRef(true);
   const sleepIdRef = useRef(null);
   const userPredictionRef = useRef([]);
@@ -33,12 +30,6 @@ function App() {
     height: 0,
   });
   var camera = null;
-
-  const [state, setState] = useState({
-    isLoading: true,
-    isCountingDown: false,
-    toastMessage: "",
-  });
 
   async function HandDetectionOnResults(results) {
     // console.log(screenSize.current)
@@ -49,14 +40,14 @@ function App() {
     const canvasCtx = canvasElement.getContext("2d");
 
     if (firstDrawRef.current) {
-      setState((prevState) => ({
-        ...prevState,
-        isLoading: false,
-        toastMessage: "👋 Welcome to UIT, I'm Photoboter🤖",
-      }));
       firstDrawRef.current = false;
       console.log("first draw");
-      console.log('first state',state.isLoading)
+      context.current.setShowSpinner(false);
+      context.current.SetContentAndShowToast({
+        title: "Notifications",
+        body: "👋 Welcome to UIT, I'm Photoboter🤖",
+        time: "Just now",
+      })
     }
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -83,15 +74,10 @@ function App() {
 
     if (
       fiveTipsUpRef.current &&
-      !inProcessRef.current &&
       !isHandlingShooting.current
     ) {
-      console.log(state);
       isHandlingShooting.current = true;
-      setState((prevState) => ({
-        ...prevState,
-        isCountingDown: true,
-      }));
+      context.current.setCountDownShow(true);
     }
 
     // console.log("take photo: ", fiveTipsUp);
@@ -109,6 +95,7 @@ function App() {
   }
 
   useEffect(() => {
+    console.log("app render!");
     const { innerWidth: w, innerHeight: h } = window;
     const minSize = Math.min(w, h);
 
@@ -126,7 +113,7 @@ function App() {
       },
     });
     hands.setOptions({
-      maxNumHands: 1,
+      maxNumHands: 4,
       modelComplexity: 1,
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
@@ -148,55 +135,41 @@ function App() {
     }
     sleepIdRef.current = SetSleepTime(300);
     console.log("sleeping...");
-
     camera.start();
   }, []);
 
-  useEffect(() => {
-    inProcessRef.current = state.isCountingDown;
-    if (!firstDrawRef.current) {
-      ClearSleepTime(sleepIdRef.current);
-      console.log("wake up");
-    }
-  }, [state.isCountingDown]);
 
   useEffect(() => {
-    if (state.toastMessage !== "") {
-      const toastTrigger = new bootstrap.Toast("#liveToast");
-      toastTrigger.show();
-    }
-  }, [state.toastMessage]);
-
-  useEffect(() => {
-    console.log("re-render app component!");
-    // console.log(state);
+    console.log("app re-render!");
   });
 
-  const context = {
-    ...state,
+  const context = useRef({
     isHandlingShooting,
     finalImageRef,
     sleepIdRef,
     webCamRef,
     userPredictionRef,
-    recogizedImageRef
-  };
+    recogizedImageRef,
+    firstDrawRef,
+  });
   const dispatch = {
-    setState,
+    addContextDispatch: (funct, fieldName) => {
+      context.current[fieldName] = funct;
+    },
     setIsHandlingShooting: (curVal) => {
-      isHandlingShooting.current = curVal;
+      context.current.isHandlingShooting.current = curVal;
     },
     setFinalImageRef: (curVal) => {
-      finalImageRef.current = curVal;
+      context.current.finalImageRef.current = curVal;
     },
     setRecogizedImageRef: (curVal) => {
-      recogizedImageRef.current = curVal;
+      context.current.recogizedImageRef.current = curVal;
     },
     setSleepIdRef: (curVal) => {
-      sleepIdRef.current = curVal;
+      context.current.sleepIdRef.current = curVal;
     },
     setUserPredictionRef: (curVal) => {
-      userPredictionRef.current = curVal;
+      context.current.userPredictionRef.current = curVal;
     },
   };
 
@@ -229,17 +202,11 @@ function App() {
             }
           ></canvas>
 
-          {state.isLoading && <Spinner />}
+          {<Spinner />}
 
-          {state.isCountingDown && <CountDownScreen times={5} />}
+          {<CountDownScreen times={5} />}
 
-          {
-            <Toast
-              header={"Notifications"}
-              body={state.toastMessage}
-              since={"Just now"}
-            />
-          }
+          {<Toast />}
           {<ModalToSendEmail />}
         </div>
       </ProcessContextDispatch.Provider>

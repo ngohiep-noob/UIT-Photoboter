@@ -1,13 +1,13 @@
 import { SetSleepTime } from "../../service/RedirectPage";
 
-const FinishProcess = (
+const FinishProcessWithToast = (
   dispatch,
-  toastMsg = "Wait a moment for new session!"
+  context,
+  toastMsg = "Chờ trong giây lát cho lần sử dụng tiếp theo!"
 ) => {
-  dispatch.setState((prev) => ({
-    ...prev,
-    toastMessage: toastMsg,
-  }));
+  context.SetContentAndShowToast({
+    body: toastMsg,
+  });
   setTimeout(() => {
     dispatch.setIsHandlingShooting(false);
     console.log("finish session!");
@@ -17,4 +17,4 @@ const FinishProcess = (
   console.log("clear predictions & sleeping...");
 };
 
-export default FinishProcess;
+export default FinishProcessWithToast;

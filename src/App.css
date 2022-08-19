@@ -1,6 +1,7 @@
 body, html{
   margin: 0px;
   height: 100vh;
+  background-color: #b7e6eb;
 }
 
 .neonText {
@@ -44,3 +45,16 @@ body, html{
   background-color: rgba(0, 0, 0, 0.6);
 }
 
+.toast::before{
+  content: "";
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-left: 15px solid rgba(255, 255, 255, 0.85);
+  border-right: 15px solid transparent;
+  border-top: 15px solid rgba(255, 255, 255, 0.85);
+  border-bottom: 15px solid transparent;
+  left: 50px;
+  bottom: -12px;
+
+}

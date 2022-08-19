@@ -1,11 +1,10 @@
 import axios from "axios";
 import dataURLtoFile from "../../util/DataURLtoFile";
 
-export const HandleSelectGuest = (context, dispatch, forceRerender) => {
+export const HandleSelectGuest = (context, dispatch) => {
   dispatch.setUserPredictionRef([]);
   setTimeout(() => {
-    forceRerender();
-    context.modalTrigger.show();
+    context.ToggleModal(true);
   }, 700);
 };
 
