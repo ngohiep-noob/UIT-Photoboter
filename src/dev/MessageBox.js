@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Fade } from "react-bootstrap";
-import { IconButton, Button, Paper, List } from "@mui/material";
+import { Button, Paper, List, Fab } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import UserInfo from "./UserInfo";
 import SendIcon from "@mui/icons-material/Send";
@@ -34,35 +35,31 @@ const MessageBox = (props) => {
       name: "Ngo Duc Hoang Hiep",
       email: "hoanghiephai@gmail.com",
     },
-    {
-      name: "Ngo Duc Hoang Hiep",
-      email: "hoanghiephai@gmail.com",
-    },
-    {
-      name: "Ngo Duc Hoang Hiep",
-      email: "hoanghiephai@gmail.com",
-    },
-    {
-      name: "Ngo Duc Hoang Hiep",
-      email: "hoanghiephai@gmail.com",
-    },
   ];
+  const [sendingAllMail, setSendingAllMail] = useState(false);
+
+  const ToggleSendMail = () => {
+    if (!sendingAllMail) {
+      setSendingAllMail(true);
+      window.setTimeout(() => {
+        setSendingAllMail(false);
+      }, 3000);
+    }
+  };
+
   return (
     <Fade in={props.show} appear={true}>
       <div className="speech-bubble">
         <div className="msg-header row justify-content-between">
           <p className="h1 col-8">{props.header}</p>
-          {/* <div className="col-1 close-msg" onClick={() => props.ToggleToast()}>
-            <img src={require("./image/cancel.png")} />
-          </div> */}
-          <IconButton
+          <Fab
             color="error"
-            size="large"
+            size="medium"
             className="col-1 close-msg"
             onClick={() => props.ToggleToast()}
           >
-            <CancelIcon fontSize="30px" />
-          </IconButton>
+            <CancelIcon />
+          </Fab>
         </div>
         <div className="msg-body">
           {userList.length > 0 ? (
@@ -73,25 +70,37 @@ const MessageBox = (props) => {
                   maxHeight: 250,
                   overflow: "auto",
                   backgroundColor: "#e4fdffae",
+                  position: "relative",
                 }}
               >
-                <List sx={{ width: "100%", maxWidth: 450 }}>
+                <List sx={{ width: "100%", maxWidth: 650 }}>
                   {userList.map((e) => (
                     <UserInfo userInfo={e} />
                   ))}
                 </List>
               </Paper>
+
+              <List sx={{ width: "100%", maxWidth: 650 }}>
+                <UserInfo userInfo={{ name: "Khong co ten toi!", email: "" }} />
+              </List>
+
               <div
                 className="row justify-content-end"
                 style={{ paddingRight: "10px", paddingTop: 20 }}
               >
-                <Button
-                  className="col-5"
-                  variant="contained"
+                <LoadingButton
+                  className="col-3"
+                  onClick={ToggleSendMail}
                   endIcon={<SendIcon />}
+                  loading={sendingAllMail}
+                  loadingPosition="end"
+                  variant="contained"
+                  sx={{
+                    borderRadius: "15px",
+                  }}
                 >
-                  Send all
-                </Button>
+                  Send All
+                </LoadingButton>
               </div>
             </>
           ) : (

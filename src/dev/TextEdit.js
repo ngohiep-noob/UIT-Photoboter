@@ -4,22 +4,32 @@ import { TextField, Typography } from "@mui/material";
 const TextEditor = (props, ref) => {
   const [edit, toggleEdit] = useState(false);
   const [data, setData] = useState(props.firstVal);
+
   useImperativeHandle(ref, () => ({
-    toggleEdit: (val) => toggleEdit(!edit),
-    getData: () => data
+    toggleEdit: (value) => toggleEdit(value),
+    getData: () => data,
+    setData: (val) => setData(val),
   }));
 
   const HandleChange = (e) => {
     setData(e.target.value);
-  }
+  };
 
   return (
     <>
       {edit ? (
-        <TextField label="name" variant="standard" onChange={HandleChange} value={data}/>
+        <TextField
+          label={props.label}
+          variant="standard"
+          onChange={HandleChange}
+          value={data}
+        />
       ) : (
-        <Typography variant="body1">
-            {data}
+        <Typography
+          variant={props.label === "name" ? "body1" : "caption"}
+          color={props.label === "name" ? "" : "text.primary"}
+        >
+          {data}
         </Typography>
       )}
     </>

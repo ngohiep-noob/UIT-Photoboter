@@ -52,21 +52,22 @@ const Test = () => {
 
   return (
     <div id="App">
-      <button onClick={ToggleToast} style={{ position: "absolute" }}>
+      <button onClick={ToggleToast} style={{ position: "absolute", top: 0, left: 0 }}>
         Show
       </button>
-      <img src={require("./image/robot.png")} id="robot" />
+      <div id='bot-message'>
+        <img src={require("./image/robot.png")} id="robot" />
 
-      <MessageBox
-        show={show}
-        header={messageOptions.current.header}
-        ToggleToast={ToggleToast}
-        body={messageOptions.current.body}
-        userInfo={messageOptions.current.userInfo}
-      />
+        <MessageBox
+          show={show}
+          header={messageOptions.current.header}
+          ToggleToast={ToggleToast}
+          body={messageOptions.current.body}
+          userInfo={messageOptions.current.userInfo}
+        />
+      </div>
       <canvas
         ref={canvasRef}
-        className="position-fixed translate-middle top-50 start-50"
       ></canvas>
     </div>
   );
