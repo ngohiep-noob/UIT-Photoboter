@@ -58,10 +58,10 @@ const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
               <ListGroup.Item
                 action
                 onClick={() => {
-                //   const email = e.includes("2152")
-                //     ? e.split(" - ")[1] + "@gm.uit.edu.vn"
-                //     : e.split(" - ")[1];
-                    const email = 'hoanghiephai@gmail.com'
+                  const email = e.includes("2152")
+                    ? e.split(" - ")[1] + "@gm.uit.edu.vn"
+                    : e.split(" - ")[1];
+                    // const email = 'hoanghiephai@gmail.com'
                   HandleSubmit(dispatch, context, email);
                   HandleClose();
                 }}

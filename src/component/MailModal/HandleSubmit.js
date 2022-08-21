@@ -17,11 +17,18 @@ const HandleSubmit = async (dispatch, context, email, name = "") => {
       .then((res) => {
         console.log("send mail: ", res);
         context.setShowSpinner(false);
-        FinishProcessWithToast(
-          dispatch,
-          context,
-          "Đã gửi email, chờ trong giây lát cho lần sử dụng tiếp theo nhé!"
-        );
+        if(res.status === 'success')
+          FinishProcessWithToast(
+            dispatch,
+            context,
+            "Đã gửi email, chờ trong giây lát cho lần sử dụng tiếp theo nhé!"
+          );
+        else 
+          FinishProcessWithToast(
+            dispatch,
+            context,
+            "Không thể gửi email, chờ trong giây lát và thử lại nhé!"
+          );
       })
       .catch((err) => {
         console.error(err);

@@ -73,7 +73,7 @@ function App() {
     );
 
     if (
-      fiveTipsUpRef.current &&
+      fiveTipsUpRef.current && 
       !isHandlingShooting.current
     ) {
       isHandlingShooting.current = true;

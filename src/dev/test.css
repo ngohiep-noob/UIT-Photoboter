@@ -1,0 +1,62 @@
+#robot{
+    position: fixed;
+    top: 7vh;
+}
+
+.speech-bubble {
+	position: fixed;
+    padding: 10px;
+    bottom: 75vh;
+    left: 35vw;
+	background: #e4fdffae;
+	border-radius: 25px;
+    min-height: 180px;
+    min-width: 400px;
+    max-height: 450px;
+    max-width: 600px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: 100px;
+	width: 0;
+	height: 0;
+	border: 20px solid transparent;
+	border-right-color: #e4fdffae;
+	border-left: 0;
+	margin-top: -20px;
+	margin-left: -20px;
+}
+
+.msg-header{
+	--bs-gutter-x: 0;
+	border-radius: 25px;
+	padding: 10px;
+	background-color: #91f7fe;
+}
+.msg-header p{
+	margin-bottom: 0;
+	padding-left: 10px;
+}
+
+.msg-body{
+	padding: 15px;
+}
+.msg-body p{
+	font-size: 1.2rem;
+	margin-bottom: 0;
+}
+.close-msg{
+	font-size: 150%;
+	width: 46px;
+	height: 46px;
+	padding: 0;
+	margin: auto 0;
+}
+.close-msg img{
+	width: 100%;
+	height: 100%;
+}

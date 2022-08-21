@@ -2,7 +2,6 @@ import axios from "axios";
 import dataURLtoFile from "../../util/DataURLtoFile";
 
 const HandleRecognize = (imgDataURL, dispatch) => {
-  
   const formData = new FormData();
   const file = dataURLtoFile(imgDataURL, "image.jpeg");
   formData.append("files", file);
