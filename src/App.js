@@ -47,7 +47,7 @@ function App() {
         title: "Notifications",
         body: "👋 Welcome to UIT, I'm Photoboter🤖",
         time: "Just now",
-      })
+      });
     }
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -72,10 +72,7 @@ function App() {
       canvasRef.current.height
     );
 
-    if (
-      fiveTipsUpRef.current && 
-      !isHandlingShooting.current
-    ) {
+    if (fiveTipsUpRef.current && !isHandlingShooting.current) {
       isHandlingShooting.current = true;
       context.current.setCountDownShow(true);
     }
@@ -138,7 +135,6 @@ function App() {
     camera.start();
   }, []);
 
-
   useEffect(() => {
     console.log("app re-render!");
   });
@@ -194,12 +190,7 @@ function App() {
           {/* canvas output */}
           <canvas
             ref={canvasRef}
-            className={
-              screenSize.current.width ===
-              Math.min(window.innerWidth, window.innerHeight)
-                ? "position-fixed translate-middle-y top-50"
-                : "position-fixed translate-middle-x start-50"
-            }
+            className={"position-fixed translate-middle top-50 start-50"}
           ></canvas>
 
           {<Spinner />}

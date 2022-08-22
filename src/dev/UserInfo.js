@@ -24,11 +24,12 @@ const UserInfo = (props) => {
     name: props.userInfo.name,
   });
   const [sending, setSending] = React.useState(false);
-  const [disableMail, setDisableMail] = React.useState(false);
+  const [sendMailSuccess, setSendMailSuccess] = React.useState(false);
+  const [disableEdit, setDisableEdit] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
   const buttonSx = {
-    ...(disableMail && {
+    ...(sendMailSuccess && {
       bgcolor: green[500],
       "&:hover": {
         bgcolor: green[700],
@@ -52,11 +53,13 @@ const UserInfo = (props) => {
 
   const handleSendMailClick = () => {
     if (!sending) {
-      setDisableMail(false);
-      setSending(true);
+      setSendMailSuccess(false); 
+      setSending(true); // toggle mail sending spinner 
       // call api to send mail
+      setEditMode(false); // turn off edit name and email
+      setDisableEdit(true); // disable edit button(fade)
       window.setTimeout(() => {
-        setDisableMail(true);
+        setSendMailSuccess(true);
         setSending(false);
       }, 2000);
     }
@@ -95,7 +98,7 @@ const UserInfo = (props) => {
       />
 
       <ListItemIcon>
-        {editMode && (
+        {(editMode) && (
           <IconButton
             color="error"
             onClick={HandleCloseEditClick}
@@ -112,21 +115,21 @@ const UserInfo = (props) => {
           onClick={HandleOpenEditClick}
           sx={{ m: 0, position: "relative" }}
         >
-          <Fab color="info" size="small">
-            {editMode ? <CheckIcon /> : <EditIcon />}
+          <Fab color="info" size="small" disabled={disableEdit}>
+            {(editMode) ? <CheckIcon /> : <EditIcon />}
           </Fab>
         </IconButton>
 
         <IconButton sx={{ m: 0, position: "relative" }}>
           <Fab
-            disabled={disableMail}
+            disabled={sendMailSuccess}
             aria-label="save"
             color="warning"
             sx={buttonSx}
             onClick={handleSendMailClick}
             size="small"
           >
-            {disableMail ? <CheckIcon /> : <EmailIcon />}
+            {sendMailSuccess ? <CheckIcon /> : <EmailIcon />}
           </Fab>
           {sending && (
             <CircularProgress

@@ -3,7 +3,14 @@ import { ProcessContextState, ProcessContextDispatch } from "../../App";
 import HandleSubmit from "./HandleSubmit";
 import FinishProcessWithToast from "./FinishProcess";
 import { HandleSelectGuest } from "./HandleRegister";
-import { ListGroup, Button, Modal, Form, FormGroup, CloseButton } from "react-bootstrap";
+import {
+  ListGroup,
+  Button,
+  Modal,
+  Form,
+  FormGroup,
+  CloseButton,
+} from "react-bootstrap";
 
 const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
   const emailRef = useRef(null);
@@ -15,7 +22,7 @@ const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
 
   function HandleClose(finish = false) {
     setShowModal(false);
-    if(finish) FinishProcessWithToast(dispatch, context);
+    if (finish) FinishProcessWithToast(dispatch, context);
     if (
       emailRef.current !== null &&
       nameRef.current !== null &&
@@ -30,7 +37,7 @@ const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
     const ToggleModal = (status = false) => {
       setShowModal(status);
     };
-    dispatch.addContextDispatch(ToggleModal, 'ToggleModal')
+    dispatch.addContextDispatch(ToggleModal, "ToggleModal");
     console.log("modal render!");
   }, []);
 
@@ -39,14 +46,10 @@ const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
   });
 
   return (
-    <Modal
-      show={showModal}
-      backdrop="static"
-      onHide={HandleClose}
-    >
+    <Modal show={showModal} backdrop="static" onHide={HandleClose}>
       <Modal.Header>
         <Modal.Title>{title}</Modal.Title>
-        <CloseButton onClick={() => HandleClose(true)}/>
+        <CloseButton onClick={() => HandleClose(true)} />
       </Modal.Header>
       <Modal.Body>
         {context.userPredictionRef.current.length > 0 ? (
@@ -61,18 +64,16 @@ const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
                   const email = e.includes("2152")
                     ? e.split(" - ")[1] + "@gm.uit.edu.vn"
                     : e.split(" - ")[1];
-                    // const email = 'hoanghiephai@gmail.com'
+                  // const email = 'hoanghiephai@gmail.com'
                   HandleSubmit(dispatch, context, email);
                   HandleClose();
                 }}
-                href={`#x`}
                 key={`#${index}`}
               >
                 {e.split(" - ")[0]}
               </ListGroup.Item>
             ))}
             <ListGroup.Item
-              href="#unknown"
               action
               onClick={() => {
                 HandleClose();
@@ -85,7 +86,7 @@ const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
         ) : (
           <Form>
             <FormGroup>
-              <Form.Label htmlFor="name-input" >Nhập tên của bạn</Form.Label>
+              <Form.Label htmlFor="name-input">Nhập tên của bạn</Form.Label>
               <Form.Control
                 id="name-input"
                 placeholder="Ngô Đức Hoàng Hiệp"
@@ -94,7 +95,7 @@ const MailModal = ({ title = "Xin chào", footerBtn = "Gửi email" }) => {
               ></Form.Control>
             </FormGroup>
             <FormGroup>
-              <Form.Label htmlFor="email-input" >Nhập email của bạn</Form.Label>
+              <Form.Label htmlFor="email-input">Nhập email của bạn</Form.Label>
               <Form.Control
                 id="email-input"
                 placeholder="example@gmail.com"

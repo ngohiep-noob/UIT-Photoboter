@@ -86,10 +86,10 @@ const MessageBox = (props) => {
 
               <div
                 className="row justify-content-end"
-                style={{ paddingRight: "10px", paddingTop: 20 }}
+                style={{ paddingRight: "10px" }}
               >
                 <LoadingButton
-                  className="col-3"
+                  className="col-4"
                   onClick={ToggleSendMail}
                   endIcon={<SendIcon />}
                   loading={sendingAllMail}
