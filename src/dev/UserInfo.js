@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Avatar,
   ListItem,
@@ -10,51 +10,69 @@ import {
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from '@mui/icons-material/Save';
 import TextEdit from "./TextEdit";
 
 const UserInfo = (props) => {
   const nameRef = useRef(null);
-  // const emailRef = useRef(null);
-
+  const [save, setSave] = useState(false)
   const HandleEditClick = () => {
     nameRef.current.toggleEdit(true);
+    setSave(!save);
+    
   }
+
+  const SaveToDatabase = () => {
+    setSave(!save);
+    console.log("Thông tin mới là: ", nameRef.current.getData())
+  }
+
+
 
   return (
     <>
       {props.userInfo && (
         <ListItem alignItems="flex-start">
-          <ListItemAvatar>
-            <Avatar
-              alt="Travis Howard"
-              src="https://i.stack.imgur.com/l60Hf.png"
-            />
-          </ListItemAvatar>
+
+              {/*AVATAR  */}
+            <ListItemAvatar>
+              <Avatar
+                alt="Travis Howard"
+                src="https://i.stack.imgur.com/l60Hf.png"
+              />
+            </ListItemAvatar>
+
+          {/* INFOR */}
           <ListItemText
+
             primary={
               <React.Fragment>
                 <TextEdit firstVal={props.userInfo.name} ref={nameRef}/>
               </React.Fragment>
             }
-            secondary={
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="caption"
-                color="text.primary"
-              >
+            
+            // change here with text edit
+            secondary={ 
+              <Typography sx={{ display: "inline" }} component="span" variant="caption" color="text.primary">
                 {props.userInfo.email}
               </Typography>
             }
           />
+
+          {/* EDIT AND GMAIL */}
           <ListItemIcon>
-            <IconButton color="info" onClick={HandleEditClick}>
-              <EditIcon />
-            </IconButton>
-            <IconButton>
-              <EmailIcon color="warning" />
-            </IconButton>
+
+              <IconButton color ="info" >
+                {save ? <SaveIcon onClick={SaveToDatabase}/> : <EditIcon onClick={HandleEditClick}/> }
+              </IconButton>
+
+
+              <IconButton>
+                <EmailIcon color="warning" />
+              </IconButton>
+
           </ListItemIcon>
+
         </ListItem>
       )}
     </>

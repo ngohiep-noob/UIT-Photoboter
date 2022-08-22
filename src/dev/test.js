@@ -6,13 +6,16 @@ import MessageBox from "./MessageBox";
 const Test = () => {
   const canvasRef = useRef(null);
   const [show, setShow] = useState(true);
+
   const messageOptions = useRef({
-    header: "Xin chao",
-    body: "Chao mung ban den voi UIT, minh la UIT-Photoboter!",
+    header: "Xin chào",
+    body: "Chào mừng bạn đến với UIT, mình là Photobter!",
     closeInSecs: 60,
     userInfo: []
   });
+
   const msgTimeOutId = useRef(null);
+
   const ToggleToast = () => {
     setShow(!show);
   };
@@ -52,22 +55,27 @@ const Test = () => {
 
   return (
     <div id="App">
-      <button onClick={ToggleToast} style={{ position: "absolute" }}>
-        Show
-      </button>
+
+      <button onClick={ToggleToast} style={{ position: "absolute" }}> Show </button>
+
+      {/* Robot */}
       <img src={require("./image/robot.png")} id="robot" />
 
+      {/*Message box  */}
       <MessageBox
-        show={show}
+        show={show} // show
         header={messageOptions.current.header}
-        ToggleToast={ToggleToast}
+        ToggleToast={ToggleToast} // function
         body={messageOptions.current.body}
         userInfo={messageOptions.current.userInfo}
       />
+
+      {/* Banner */}
       <canvas
         ref={canvasRef}
         className="position-fixed translate-middle top-50 start-50"
       ></canvas>
+
     </div>
   );
 };
