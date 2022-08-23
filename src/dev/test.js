@@ -6,13 +6,50 @@ const Test = () => {
   const canvasRef = useRef(null);
   const [show, setShow] = useState(true);
   const messageOptions = useRef({
-    header: "Xin chao",
-    body: "Chao mung ban den voi UIT, minh la UIT-Photoboter!",
+    header: "Xin chào",
+    body: "Chào mừng bạn đến với UIT, Mình là UIT-Photoboter!",
     closeInSecs: 60,
-    userInfo: []
+    userList: [
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      
+    ]
   });
-  const msgTimeOutId = useRef(null);
-  const ToggleToast = () => {
+
+  const ToggleMessageBox = () => { // open or close
     setShow(!show);
   };
 
@@ -51,7 +88,7 @@ const Test = () => {
 
   return (
     <div id="App">
-      <button onClick={ToggleToast} style={{ position: "absolute", top: 0, left: 0 }}>
+      <button onClick={ToggleMessageBox} style={{ position: "absolute", top: 0, left: 0 }}>
         Show
       </button>
       <div id='bot-message'>
@@ -60,9 +97,9 @@ const Test = () => {
         <MessageBox
           show={show}
           header={messageOptions.current.header}
-          ToggleToast={ToggleToast}
+          ToggleToast={ToggleMessageBox}
           body={messageOptions.current.body}
-          userInfo={messageOptions.current.userInfo}
+          userList={messageOptions.current.userList}
         />
       </div>
       <canvas

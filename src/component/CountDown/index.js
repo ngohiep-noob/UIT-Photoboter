@@ -1,9 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import HandleRecognize from "./HandleRecognize";
 import { ClearSleepTime } from "../../service/RedirectPage";
+import { Backdrop } from "@mui/material";
 
-const SnapShot = (props) => {
+const CountDown = (props, ref) => {
   const [times, setTimes] = useState(props.times);
   const [show, setCountDownShow] = useState(false);
   const context = useContext(ProcessContextState).current;
@@ -16,61 +23,66 @@ const SnapShot = (props) => {
     // return imgFile;
   };
 
-  useEffect(() => {
-    console.log("countdown render!");
-    // countdown before shotting.
-    dispatch.addContextDispatch(setCountDownShow, "setCountDownShow");
-  }, []);
+  useImperativeHandle(ref, () => ({
+    setCountDownShow,
+  }));
 
   useEffect(() => {
-    if (times === 1) {
-      //send mail
-      setTimeout(() => {
-        dispatch.setFinalImageRef(CanvasToFile());
-        context.ToggleModal(true);
-      }, 1100);
-    } else if (times === 4) {
+    if (times === 4) {
       //call api recognize
       const imgDataURL = context.webCamRef.current.getScreenshot();
       dispatch.setRecogizedImageRef(imgDataURL);
-      HandleRecognize(imgDataURL, dispatch);
+      HandleRecognize(imgDataURL, dispatch, context);
+    }
+    if (times === 1) {
+      //send mail
+      setTimeout(() => {
+        dispatch.setShowMsgBox(false); // close notifications(from mode 1) ***
+        dispatch.setFinalImageRef(CanvasToFile());
+        setTimeout(() => {
+          dispatch.setMessageOptions({ ...context.messageOptions.current, mode: 2 });
+          dispatch.setShowMsgBox(true); // re-show predictions(switch to mode 2)
+        }, 500);
+      }, 1000);
     }
   }, [times]);
 
   useEffect(() => {
-    if(show) {
-      ClearSleepTime(context.sleepIdRef.current)
+    if (show) {
+      ClearSleepTime(context.sleepIdRef.current); // wake up
       let count = props.times - 1;
       var intervalId = setInterval(() => {
         if (count > 0) {
-          setTimes(count);
+          setTimes(count); // start count down
           count--;
         } else {
-          setCountDownShow(false);
           clearInterval(intervalId);
+          setCountDownShow(false); // clear count down
         }
-      }, 1100)
+      }, 1100);
     }
-  }, [show]) 
-
-  useEffect(() => {
-    console.log("countdown re-render!");
-  });
+  }, [show]);
 
   return (
     <div>
-      {show && (
-        <div id="countdown-backdrop">
+      {
+        <Backdrop
+          open={show}
+          sx={{
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            background: "#00000099",
+          }}
+        >
           <p
             className="display-1 position-fixed top-50 start-50 translate-middle neonText"
             style={{ fontSize: 150 }}
           >
             {times}
           </p>
-        </div>
-      )}
+        </Backdrop>
+      }
     </div>
   );
 };
 
-export default SnapShot;
+export default forwardRef(CountDown);

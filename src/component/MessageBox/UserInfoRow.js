@@ -4,6 +4,7 @@ import React, {
   useState,
   forwardRef,
   useImperativeHandle,
+  useContext,
 } from "react";
 import {
   Avatar,
@@ -18,15 +19,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import ReplayIcon from "@mui/icons-material/Replay";
-import TextEdit from "./TextEdit";
+import TextEdit from "./TextEditable";
 import CircularProgress from "@mui/material/CircularProgress";
 import { green } from "@mui/material/colors";
+import SendMail from "./SendMail";
 import Fab from "@mui/material/Fab";
+import { ProcessContextState } from "../../App";
 
 const UserInfo = (props, ref) => {
   const nameRef = useRef(null);
   const emailRef = useRef(null);
-  const success = useRef(false);
+  const context = useContext(ProcessContextState).current;
   const cacheRef = useRef({
     email: props.userInfo.email,
     name: props.userInfo.name,
@@ -61,6 +64,9 @@ const UserInfo = (props, ref) => {
 
   const handleSendMail = () => {
     // sendMailStatus === 0 or 2 ==> first send or resend mail
+    if(sendMailStatus === 1) {
+      return new Promise((resolve, reject) => resolve(true));
+    }
     if (!sending && (sendMailStatus === 0 || sendMailStatus === 2)) {
       const email = emailRef.current.getData();
       const name = nameRef.current.getData();
@@ -79,26 +85,36 @@ const UserInfo = (props, ref) => {
       setSending(true); // toggle mail sending spinner
       // call api to send mail
       return new Promise((resolve, reject) => {
-        console.log("sent email: ", name, " - ", email);
-        success.current = Math.round(Math.random());
-        setTimeout(() => {
-          if (success.current == true) {
-            console.log("sent email: ", name, " - ", email);
-            setSendMailStatus(1);
-            setSending(false);
-            console.log(`email: ${email} - success`);
-            resolve(true);
-          }
-
-          if (success.current == false) {
+        SendMail({
+          recipient: email,
+          imgBase64: context.finalImageRef.current,
+          title: `🤖 UIT photoboter xin tặng ${name} một tấm hình`,
+          textContent: "Người trong hình thật xinh đẹp 🥰",
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            if (res.status === "success") {
+              console.log("sent mail: ", res);
+              setSendMailStatus(1);
+              setSending(false);
+              resolve(true);
+            }
+            if (res.status === "error") {
+              console.log("send mail fail: ", res);
+              setSendMailStatus(2);
+              setSending(false);
+              resolve(false);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            console.log("send mail fail: ", err);
             setSendMailStatus(2);
-            success.current = true;
             setSending(false);
-            console.error(`email: ${email} - error`);
-            // return Promise.resolve(false); // error
             resolve(false);
-          }
-        }, 1000);
+          });
       });
     }
   };

@@ -1,61 +1,61 @@
-import React, { useContext, useEffect } from "react";
-import { ProcessContextDispatch } from "../../App";
+import React, { useEffect, useState, useContext, useRef } from "react";
+import { ToastContainer, Toast } from "react-bootstrap";
 
-const bootstrap = require("bootstrap");
+import { ProcessContextDispatch, ProcessContextState } from "../../App";
 
-const Toast = ({header, body, since}) => {
+const ToastComp = () => {
   const dispatch = useContext(ProcessContextDispatch);
+  const context = useContext(ProcessContextState).current;
+
+  const [show, setShowToast] = useState(false);
+  const content = useRef({
+    title: "Notifications",
+    body: "",
+    time: "Just now",
+  });
+
+  const HandleClose = () => {
+    setShowToast(false);
+  };
 
   useEffect(() => {
-    document
-      .getElementById("liveToast")
-      .addEventListener("hidden.bs.toast", () => {
-        dispatch.setState((prev) => ({
-          ...prev,
-          toastMessage: "",
-        }));
-      });
+    const SetContentAndShowToast = ({
+      title = "Notifications",
+      body,
+      time = "Just now",
+    }) => {
+      content.current = { title, body, time };
+      setShowToast(true);
+    };   
   }, []);
 
   useEffect(() => {
-    if(body !== "") {
-      const toastTrigger = new bootstrap.Toast("#liveToast");
-      if(!toastTrigger.isShown()) {
-        toastTrigger.show();
-      }
+    if (show === false) {
+      content.current = {
+        title: "Notifications",
+        body: "",
+        time: "Just now",
+      };
     }
-    console.log("toast render!");
-  });
+  }, [show]);
 
   return (
-    <div className="toast-container position-fixed top-0 end-0 p-3">
-      <div
-        id="liveToast"
-        className="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-        style={{borderRadius: 25}}
+    <ToastContainer position="top-end" className="p-3">
+      <Toast
+        show={show}
+        onClose={HandleClose}
+        autohide={true}
+        style={{ borderRadius: 25 }}
       >
-        <div className="toast-header" style={{borderRadius: 25}}>
-          <img
-            src={"./info-icon.png"}
-            className="rounded me-2"
-            alt="👀"
-          />
-          <strong className="me-auto">{header}</strong>
-          <small>{since}</small>
-          <button
-            type="button"
-            className="btn-close"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div className="toast-body">{body}</div>
-      </div>
-    </div>
+        <Toast.Header closeButton={false} style={{ borderRadius: 25 }}>
+          <img src={"./info-icon.png"} className="rounded me-2" alt="👀" />
+          <strong className="me-auto">{content.current.title}</strong>
+          <small>{content.current.time}</small>
+        </Toast.Header>
+        <Toast.Body>{content.current.body}</Toast.Body>
+      </Toast>
+    </ToastContainer>
   );
 };
 
-export default Toast;
+export default ToastComp;
