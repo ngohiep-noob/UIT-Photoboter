@@ -1,62 +1,82 @@
-#robot{
-    position: fixed;
-    top: 7vh;
+body,
+html,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+#App {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#bot-message {
+  width: 100%;
+  display: flex;
+  margin-bottom: 30px;
+  height: 700px;
+  align-items: center;
+}
+
+#robot {
+	width: 350px;
+	height: 400px;
+	scale: 1.3;
 }
 
 .speech-bubble {
-	position: fixed;
-    padding: 10px;
-    bottom: 75vh;
-    left: 35vw;
-	background: #e4fdffae;
-	border-radius: 25px;
-    min-height: 180px;
-    min-width: 400px;
-    max-height: 450px;
-    max-width: 600px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	align-self: center;
+  padding: 10px;
+  position: relative;
+  /* background: #dffdff; */
+  background-image: linear-gradient( 109.6deg, rgba(156,252,248,1) 11.2%, rgba(110,123,251,1) 91.1% );
+  border-radius: 25px;
+  min-height: 180px;
+  min-width: 500px;
+  max-height: 600px;
+  max-width: 700px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+canvas {
+ margin-bottom: 15vh;
 }
 
 .speech-bubble:after {
-	content: '';
-	position: absolute;
-	left: 0;
-	bottom: 100px;
-	width: 0;
-	height: 0;
-	border: 20px solid transparent;
-	border-right-color: #e4fdffae;
-	border-left: 0;
-	margin-top: -20px;
-	margin-left: -20px;
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 50%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-right-color: #bafaff;
+  border-left: 0;
+  margin-top: -20px;
+  margin-left: -20px;
 }
 
-.msg-header{
-	--bs-gutter-x: 0;
-	border-radius: 25px;
-	padding: 10px;
-	background-color: #91f7fe;
+.msg-header {
+  --bs-gutter-x: 0;
+  border-radius: 25px;
+  padding: 10px;
+  background-color: #fbfdffd9;
 }
-.msg-header p{
-	margin-bottom: 0;
-	padding-left: 10px;
+.msg-header p {
+  margin-bottom: 0;
+  padding-left: 10px;
 }
 
-.msg-body{
-	padding: 15px;
+.msg-body {
+  padding: 15px 15px 0 15px;
 }
-.msg-body p{
-	font-size: 1.2rem;
-	margin-bottom: 0;
-}
-.close-msg{
-	font-size: 150%;
-	width: 46px;
-	height: 46px;
-	padding: 0;
-	margin: auto 0;
-}
-.close-msg img{
-	width: 100%;
-	height: 100%;
+
+.msg-body p {
+  font-size: 1.2rem;
+  margin-bottom: 0;
 }

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Fade } from "react-bootstrap";
 import "./test.css";
 import MessageBox from "./MessageBox";
 
@@ -8,15 +7,61 @@ const Test = () => {
   const [show, setShow] = useState(true);
 
   const messageOptions = useRef({
+<<<<<<< HEAD
     header: "Xin chào",
     body: "Chào mừng bạn đến với UIT, mình là Photobter!",
+=======
+    header: "Xin chào",
+    body: "Chào mừng bạn đến với UIT, Mình là UIT-Photoboter!",
+>>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
     closeInSecs: 60,
-    userInfo: []
+    userList: [
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      {
+        name: "Ngo Duc Hoang Hiep",
+        email: "hoanghiephai@gmail.com",
+        avatar: 'https://i.stack.imgur.com/l60Hf.png'
+      },
+      
+    ]
   });
 
+<<<<<<< HEAD
   const msgTimeOutId = useRef(null);
 
   const ToggleToast = () => {
+=======
+  const ToggleMessageBox = () => { // open or close
+>>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
     setShow(!show);
   };
 
@@ -55,6 +100,7 @@ const Test = () => {
 
   return (
     <div id="App">
+<<<<<<< HEAD
 
       <button onClick={ToggleToast} style={{ position: "absolute" }}> Show </button>
 
@@ -71,9 +117,24 @@ const Test = () => {
       />
 
       {/* Banner */}
+=======
+      <button onClick={ToggleMessageBox} style={{ position: "absolute", top: 0, left: 0 }}>
+        Show
+      </button>
+      <div id='bot-message'>
+        <img src={require("./image/robot.png")} id="robot" />
+
+        <MessageBox
+          show={show}
+          header={messageOptions.current.header}
+          ToggleToast={ToggleMessageBox}
+          body={messageOptions.current.body}
+          userList={messageOptions.current.userList}
+        />
+      </div>
+>>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
       <canvas
         ref={canvasRef}
-        className="position-fixed translate-middle top-50 start-50"
       ></canvas>
 
     </div>

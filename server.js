@@ -30,26 +30,6 @@ app.post('/send-mail', async (req, res) => {
   }
 })
 
-app.post('/slow-response/:time', (req, res) => {
-  setTimeout(() => {
-    return res.json({
-      data: [
-        {"sim":0.7,"name":"ngo hiep 1 - 21520846"},
-        {"sim":0.8,"name":"ngo hiep 2 - 21520846"},
-        {"sim":0.85,"name":"ngo hiep 3 - 21520846"},
-        {"sim":0.35,"name":"ngo hiep 3 - 21520846"},
-      ]
-    })
-  }, req.params.time)
-})
-
-app.post('/slow-empty-response/:time', (req, res) => {
-  setTimeout(() => {
-    return res.json({
-      data: []
-    })
-  }, req.params.time)
-})
 
 app.post('/recognize', (req, res) => {
   setTimeout(() => {

@@ -1,31 +1,30 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ProcessContextDispatch, ProcessContextState } from "../../App";
+import React, {
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import { Backdrop, CircularProgress } from "@mui/material";
 
-const Spinner = () => {
+const Spinner = (props, ref) => {
   const [show, setShowSpinner] = useState(true);
-  const dispatch = useContext(ProcessContextDispatch);
-  const context = useContext(ProcessContextState).current;
 
-  useEffect(() => {
-    console.log('spinner render');
-    dispatch.addContextDispatch(setShowSpinner, 'setShowSpinner');
-  }, [])
-
-  useEffect(() => {
-    console.log('spinner re-render')
-  })
+  useImperativeHandle(ref, () => ({
+    toggleSpinner: () => setShowSpinner(!show),
+  }));
 
   return (
-    <>
-      {show && (
-        <div id="spinner-backdrop">
-          <div className="text-center loading">
-            <span className="spinner-border" role="status"></span>
-          </div>
-        </div>
-      )}
-    </>
+    <Backdrop
+      open={show}
+      sx={{
+        color: "#000",
+        background: "#fff",
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+      }}
+    >
+      <CircularProgress color="inherit" size={60} />
+    </Backdrop>
   );
 };
 
-export default Spinner;
+export default forwardRef(Spinner);

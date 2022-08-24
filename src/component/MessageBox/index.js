@@ -1,38 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Fade } from "react-bootstrap";
-import { Paper, List, Fab, Box } from "@mui/material";
+import { Paper, List, Fab } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import UserInfo from "./UserInfo";
+import UserInfo from "./UserInfoRow";
 import SendIcon from "@mui/icons-material/Send";
 
-<<<<<<< HEAD
-// show / toggle / header body infor 
-const MessageBox = (props) => {
-  const userList = [
-    {
-      name: "Ngo Duc Hoang Hiep",
-      email: "hoanghiephai@gmail.com",
-    },
-    {
-      name: "Ngo Duc Hoang Hiep",
-      email: "hoanghiephai@gmail.com",
-    },
-    {
-      name: "Ngo Duc Hoang Hiep",
-      email: "hoanghiephai@gmail.com",
-    },
-    {
-      name: "Ngo Duc Hoang Hiep",
-      email: "hoanghiephai@gmail.com",
-    },
-
-  ];
-
-=======
 const MessageBox = (props) => {
   const [sentAllMail, setSentAllMail] = useState(false);
   const [sending, setSending] = useState(false);
   const userInfoListRef = useRef(new Array(props.userList.length).fill(null));
+  const newUserRef = useRef(null);
 
   const ToggleSendMail = () => {
     if (!sentAllMail && !sending) {
@@ -41,7 +18,6 @@ const MessageBox = (props) => {
   };
 
   useEffect(() => {
-    console.log('render message box!')
     if (!props.show && sentAllMail) {
       setSentAllMail(false);
     }
@@ -62,7 +38,7 @@ const MessageBox = (props) => {
           if (r === true) status.success++;
           if (r === false) status.fail++;
         });
-        console.log('send all status:', status);
+        console.log("send all status:", status);
         if (status.success === props.userList.length) {
           setSentAllMail(true);
         } else {
@@ -72,20 +48,15 @@ const MessageBox = (props) => {
       });
     }
   }, [sending]);
->>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
 
   return (
     <Fade in={props.show} appear={true} unmountOnExit={!props.show}>
       <div className="speech-bubble">
-
-        {/* HEADER */}
         <div className="msg-header row justify-content-between">
-          <p className="h1 col-8">{props.header}</p>
-<<<<<<< HEAD
-          <IconButton
-=======
+          <h1 className="col-10" style={{ width: "fit-content" }}>
+            {props.header}
+          </h1>
           <Fab
->>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
             color="error"
             size="medium"
             className="col-1 close-msg"
@@ -94,23 +65,10 @@ const MessageBox = (props) => {
             <CancelIcon />
           </Fab>
         </div>
-
-        {/* BODY */}
         <div className="msg-body">
-          {props.userList.length >= 0 ? (
+          {props.mode === 2 ? (
             <>
-<<<<<<< HEAD
-              {/* EACH PERSON */}
-              <Paper elevation={0} style={{ maxHeight: 250, overflow: "auto", backgroundColor: "#e4fdffae",}}>
-                <List sx={{ width: "100%", maxWidth: 450 }}>
-                  {userList.map((e) => (<UserInfo userInfo={e} />))}
-                </List>
-              </Paper>
-
-              {/* SEND ALL */}
-              <div className="row justify-content-end" style={{ paddingRight: "10px", paddingTop: 20 }}>
-                <Button className="col-5" variant="contained" endIcon={<SendIcon />}> Send all </Button>
-=======
+              {/* predictions */}
               {props.userList.length > 0 && (
                 <Paper
                   elevation={0}
@@ -135,6 +93,8 @@ const MessageBox = (props) => {
                   </List>
                 </Paper>
               )}
+
+              {/* register new user */}
               <List
                 sx={{
                   width: "100%",
@@ -148,6 +108,7 @@ const MessageBox = (props) => {
                 <UserInfo userInfo={{ name: "Tôi là người mới!", email: "" }} />
               </List>
 
+              {/* button send all mail */}
               <div
                 className="row justify-content-end"
                 style={{ paddingRight: "10px" }}
@@ -158,18 +119,20 @@ const MessageBox = (props) => {
                   color="primary"
                   className="col-4"
                   onClick={ToggleSendMail}
-                  disabled={sentAllMail || sending}
+                  disabled={
+                    sentAllMail || sending || props.userList.length === 0
+                  }
                 >
                   send all
-                  <SendIcon sx={{ ml: 1 }} />
+                  <SendIcon sx={{ ml: 1 }} ref={newUserRef} />
                 </Fab>
->>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
               </div>
             </>
-
-          ) : ( <p>{props.body}</p> )}
+          ) : (
+            // mode 2: show notifications
+            <p>{props.body}</p>
+          )}
         </div>
-
       </div>
     </Fade>
   );

@@ -28,7 +28,7 @@ const isFiveTipsUp = (multiHandLandmarks, width, height) => {
   //the other fingers
   for (let id = 1; id <= 4; id++) {
     if (lmList[tipIds[id]]) {
-      if (lmList[tipIds[id]].at(2) < lmList[tipIds[id] - 2].at(2)) {
+      if (lmList[tipIds[id]].at(2) < lmList[tipIds[id] - 1].at(2) && lmList[tipIds[id]-1].at(2) < lmList[tipIds[id] - 2].at(2) && lmList[tipIds[id]-2].at(2) < lmList[tipIds[id] - 3].at(2)) {
         //fingers up
         fingersUp++;
       }

@@ -1,14 +1,11 @@
-<<<<<<< HEAD
-import React, { useEffect, useRef, useState } from "react";
-=======
 import React, {
   useEffect,
   useRef,
   useState,
   forwardRef,
   useImperativeHandle,
+  useContext,
 } from "react";
->>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
 import {
   Avatar,
   ListItem,
@@ -19,35 +16,20 @@ import {
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import EditIcon from "@mui/icons-material/Edit";
-<<<<<<< HEAD
-import SaveIcon from '@mui/icons-material/Save';
-=======
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import ReplayIcon from "@mui/icons-material/Replay";
->>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
-import TextEdit from "./TextEdit";
+import TextEdit from "./TextEditable";
 import CircularProgress from "@mui/material/CircularProgress";
 import { green } from "@mui/material/colors";
+import SendMail from "./SendMail";
 import Fab from "@mui/material/Fab";
+import { ProcessContextState } from "../../App";
 
 const UserInfo = (props, ref) => {
   const nameRef = useRef(null);
-<<<<<<< HEAD
-  const [save, setSave] = useState(false)
-  const HandleEditClick = () => {
-    nameRef.current.toggleEdit(true);
-    setSave(!save);
-    
-  }
-
-  const SaveToDatabase = () => {
-    setSave(!save);
-    console.log("Thông tin mới là: ", nameRef.current.getData())
-  }
-=======
   const emailRef = useRef(null);
-  const success = useRef(false);
+  const context = useContext(ProcessContextState).current;
   const cacheRef = useRef({
     email: props.userInfo.email,
     name: props.userInfo.name,
@@ -82,6 +64,9 @@ const UserInfo = (props, ref) => {
 
   const handleSendMail = () => {
     // sendMailStatus === 0 or 2 ==> first send or resend mail
+    if(sendMailStatus === 1) {
+      return new Promise((resolve, reject) => resolve(true));
+    }
     if (!sending && (sendMailStatus === 0 || sendMailStatus === 2)) {
       const email = emailRef.current.getData();
       const name = nameRef.current.getData();
@@ -100,26 +85,36 @@ const UserInfo = (props, ref) => {
       setSending(true); // toggle mail sending spinner
       // call api to send mail
       return new Promise((resolve, reject) => {
-        console.log("sent email: ", name, " - ", email);
-        success.current = Math.round(Math.random());
-        setTimeout(() => {
-          if (success.current == true) {
-            console.log("sent email: ", name, " - ", email);
-            setSendMailStatus(1);
-            setSending(false);
-            console.log(`email: ${email} - success`);
-            resolve(true);
-          }
-
-          if (success.current == false) {
+        SendMail({
+          recipient: email,
+          imgBase64: context.finalImageRef.current,
+          title: `🤖 UIT photoboter xin tặng ${name} một tấm hình`,
+          textContent: "Người trong hình thật xinh đẹp 🥰",
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            if (res.status === "success") {
+              console.log("sent mail: ", res);
+              setSendMailStatus(1);
+              setSending(false);
+              resolve(true);
+            }
+            if (res.status === "error") {
+              console.log("send mail fail: ", res);
+              setSendMailStatus(2);
+              setSending(false);
+              resolve(false);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            console.log("send mail fail: ", err);
             setSendMailStatus(2);
-            success.current = true;
             setSending(false);
-            console.error(`email: ${email} - error`);
-            // return Promise.resolve(false); // error
             resolve(false);
-          }
-        }, 1000);
+          });
       });
     }
   };
@@ -132,59 +127,8 @@ const UserInfo = (props, ref) => {
     nameRef.current.toggleEdit(editMode);
     emailRef.current.toggleEdit(editMode);
   }, [editMode]);
->>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
-
-
 
   return (
-<<<<<<< HEAD
-    <>
-      {props.userInfo && (
-        <ListItem alignItems="flex-start">
-
-              {/*AVATAR  */}
-            <ListItemAvatar>
-              <Avatar
-                alt="Travis Howard"
-                src="https://i.stack.imgur.com/l60Hf.png"
-              />
-            </ListItemAvatar>
-
-          {/* INFOR */}
-          <ListItemText
-
-            primary={
-              <React.Fragment>
-                <TextEdit firstVal={props.userInfo.name} ref={nameRef}/>
-              </React.Fragment>
-            }
-            
-            // change here with text edit
-            secondary={ 
-              <Typography sx={{ display: "inline" }} component="span" variant="caption" color="text.primary">
-                {props.userInfo.email}
-              </Typography>
-            }
-          />
-
-          {/* EDIT AND GMAIL */}
-          <ListItemIcon>
-
-              <IconButton color ="info" >
-                {save ? <SaveIcon onClick={SaveToDatabase}/> : <EditIcon onClick={HandleEditClick}/> }
-              </IconButton>
-
-
-              <IconButton>
-                <EmailIcon color="warning" />
-              </IconButton>
-
-          </ListItemIcon>
-
-        </ListItem>
-      )}
-    </>
-=======
     <ListItem alignItems="flex-start">
       <ListItemAvatar>
         <Avatar alt={props.userInfo.name} src={props.userInfo.avatar} />
@@ -271,7 +215,6 @@ const UserInfo = (props, ref) => {
         </Box>
       </ListItemIcon>
     </ListItem>
->>>>>>> c47c620d0b6b1f4a7b570c8248ab81108865a2c6
   );
 };
 
