@@ -36,9 +36,11 @@ function App() {
     header: "Xin chào",
     body:
       "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
-    mode: 1, // mode 1: show notification(Ex. hello world) | mode 2: show predictions list
+    // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
+    mode: 1,
     closeInSecs: 60,
     userList: [],
+    guestList: [],
   });
 
   const [showMsgBox, setShowMsgBox] = useState(true);
@@ -86,6 +88,14 @@ function App() {
     if (fiveTipsUpRef.current && !isHandlingShooting.current) {
       isHandlingShooting.current = true;
       CountDownRef.current.setCountDownShow(true);
+    }
+    if (
+      fiveTipsUpRef.current &&
+      isHandlingShooting.current &&
+      messageOptions.current.mode === 2 &&
+      showMsgBox == true
+    ) {
+      console.log("brake session!");
     }
 
     if (results.multiHandLandmarks) {
@@ -163,8 +173,9 @@ function App() {
             mode: 1,
             closeInSecs: 60,
             userList: [],
+            guestList: [],
           },
-          650
+          550
         );
       }
       // user close welcome statement
@@ -186,8 +197,10 @@ function App() {
 
     if (showMsgBox === true) {
       if (
-        messageOptions.current.mode === 1 &&
-        messageOptions.current.header === "Cảm ơn bạn nhé!"
+        (messageOptions.current.mode === 1 &&
+          messageOptions.current.header === "Cảm ơn bạn nhé!") ||
+        (messageOptions.current.mode === 2 &&
+          messageOptions.current.header === "Có gì đó sai sai!")
       ) {
         // finish session ==> ready for new session in 5s
         setTimeout(() => {
@@ -204,9 +217,10 @@ function App() {
             body:
               "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
             userList: [],
+            guestList: [],
             mode: 1,
           },
-          5000 + 650
+          5000 + 550
         );
       }
     }
@@ -253,9 +267,11 @@ function App() {
             screenshotQuality={1}
             style={{ visibility: "hidden", position: "absolute" }}
           />
+
+          {/* canvas output */}
+          <canvas ref={canvasRef}></canvas>
           <div id="bot-message">
             <img src={require("./dev/image/robot.png")} id="robot" />
-
             <MessageBox
               show={showMsgBox}
               header={messageOptions.current.header}
@@ -263,11 +279,9 @@ function App() {
               body={messageOptions.current.body}
               mode={messageOptions.current.mode}
               userList={messageOptions.current.userList}
+              guestList={messageOptions.current.guestList}
             />
           </div>
-          {/* canvas output */}
-          <canvas ref={canvasRef}></canvas>
-
           {<Spinner ref={spinnerRef} />}
 
           {<CountDownScreen times={5} ref={CountDownRef} />}

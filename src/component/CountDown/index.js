@@ -34,6 +34,7 @@ const CountDown = (props, ref) => {
       dispatch.setRecogizedImageRef(imgDataURL);
       HandleRecognize(imgDataURL, dispatch, context);
     }
+
     if (times === 1) {
       //send mail
       setTimeout(() => {
@@ -42,8 +43,8 @@ const CountDown = (props, ref) => {
         setTimeout(() => {
           dispatch.setMessageOptions({ ...context.messageOptions.current, mode: 2 });
           dispatch.setShowMsgBox(true); // re-show predictions(switch to mode 2)
-        }, 500);
-      }, 1000);
+        }, 200);
+      }, 1100);
     }
   }, [times]);
 

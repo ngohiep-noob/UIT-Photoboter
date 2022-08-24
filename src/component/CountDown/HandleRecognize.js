@@ -12,37 +12,43 @@ const HandleRecognize = (imgDataURL, dispatch, context) => {
       },
     })
     .then((res) => {
-      const userList = res.data.reduce((prev, curr) => {
-        if (curr.sim >= 0.7) {
-          return [
-            ...prev,
-            {
-              name: curr.name.split(" - ")[0],
-              email: curr.name.includes("2152")
-                ? curr.name.split(" - ")[1] + "@gm.uit.edu.vn"
-                : curr.name.split(" - ")[1],
-              avatar: process.env.REACT_APP_RECOGNIZE_URL + curr.path,
-            },
-          ];
+      const userList = [],
+        guestList = [];
+      res.data.forEach((e) => {
+        if (e.name !== "") {
+          userList.push({
+            name: e.name.split(" - ")[0],
+            email: e.name.split(" - ")[1],
+            avatar: process.env.REACT_APP_RECOGNIZE_URL + e.path,
+          });
+        } else {
+          guestList.push({
+            name: "Bạn là khách!",
+            email: "",
+            avatar: process.env.REACT_APP_RECOGNIZE_URL + e.path,
+          });
         }
-      }, []);
-      console.log("recogized!!!", userList);
-
+      });
+      console.log("recogized!!!");
+      console.log("user: ", userList);
+      console.log("guest: ", guestList);
+      const header =
+        userList.length === 0
+          ? "Chúng ta làm quen nhé!"
+          : "Dưới đây có tên của bạn không?";
       dispatch.setMessageOptions({
         ...context.messageOptions.current,
-        userList,
-        header:
-          userList.length === 0
-            ? "Chúng ta làm quen nhé!"
-            : "Dưới đây có tên của bạn không?",
+        userList: userList,
+        guestList: guestList,
+        header: header,
       });
     })
     .catch((err) => {
-      console.error('error', err);
+      console.error("error", err);
       dispatch.setMessageOptions({
         ...context.messageOptions.current,
         userList: [],
-        header: "Chúng ta làm quen nhé!",
+        header: "Có gì đó sai sai!",
       });
     });
 };

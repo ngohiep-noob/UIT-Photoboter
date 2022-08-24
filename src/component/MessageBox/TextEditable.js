@@ -27,7 +27,7 @@ const TextEditor = (props, ref) => {
         />
       ) : (
         <Typography
-          variant={props.label === "Name" ? "body1" : "caption"}
+          variant={props.label === "Name" ? "h6" : "caption"}
           color={props.label === "Name" ? "text.primary" : "text.secondary"}
           sx={{maxWidth: '400px'}}
         >

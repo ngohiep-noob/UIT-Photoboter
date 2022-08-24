@@ -76,11 +76,11 @@ const UserInfo = (props, ref) => {
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) === false
       ) {
         console.log("invalid email!");
-        return;
+        return new Promise((resolve, reject) => resolve(false));
       }
       if (name === "") {
         console.error("name cannot empty!");
-        return;
+        return new Promise((resolve, reject) => resolve(false));
       }
       setSending(true); // toggle mail sending spinner
       // call api to send mail
@@ -131,7 +131,7 @@ const UserInfo = (props, ref) => {
   return (
     <ListItem alignItems="flex-start">
       <ListItemAvatar>
-        <Avatar alt={props.userInfo.name} src={props.userInfo.avatar} />
+        <Avatar alt={props.userInfo.name} src={props.userInfo.avatar} sx={{width: 56, height: 56}}/>
       </ListItemAvatar>
 
       <ListItemText
@@ -153,6 +153,7 @@ const UserInfo = (props, ref) => {
             />
           </React.Fragment>
         }
+        sx={{margin: '6px 15px 6px 15px'}}
       />
 
       <ListItemIcon>
@@ -184,9 +185,9 @@ const UserInfo = (props, ref) => {
             color={
               sendMailStatus === 0
                 ? "warning"
-                : sendMailStatus === 2
+                : (sendMailStatus === 2
                 ? "error"
-                : "success"
+                : "success")
             }
             onClick={handleSendMail}
             sx={{ ...buttonSx }}

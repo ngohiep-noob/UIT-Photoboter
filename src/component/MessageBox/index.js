@@ -56,6 +56,7 @@ const MessageBox = (props) => {
           <h1 className="col-10" style={{ width: "fit-content" }}>
             {props.header}
           </h1>
+
           <Fab
             color="error"
             size="medium"
@@ -67,6 +68,7 @@ const MessageBox = (props) => {
         </div>
         <div className="msg-body">
           {props.mode === 2 ? (
+            // mode 2: render prediction
             <>
               {/* predictions */}
               {props.userList.length > 0 && (
@@ -78,16 +80,15 @@ const MessageBox = (props) => {
                     backgroundColor: "#fefefe80",
                     borderRadius: "10px",
                     position: "relative",
+                    margin: '0 0 15px'
                   }}
                 >
                   <List sx={{ width: "100%", maxWidth: 650 }}>
-                    {props.userList.map((e, i) => (
+                    {props.userList.map((e, index) => (
                       <UserInfo
                         userInfo={e}
-                        key={i}
-                        ref={(el) => {
-                          userInfoListRef.current[i] = el;
-                        }}
+                        key={index}
+                        ref={(el) => (userInfoListRef.current[index] = el)}
                       />
                     ))}
                   </List>
@@ -95,41 +96,57 @@ const MessageBox = (props) => {
               )}
 
               {/* register new user */}
-              <List
-                sx={{
-                  width: "100%",
-                  maxWidth: 650,
-                  backgroundColor: "#fefefe80",
-                  p: 0,
-                  my: 1,
-                  borderRadius: "10px",
-                }}
-              >
-                <UserInfo userInfo={{ name: "Tôi là người mới!", email: "" }} />
-              </List>
+
+              {props.guestList.length > 0 && (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    maxHeight: 150,
+                    overflow: "auto",
+                    backgroundColor: "#fefefe80",
+                    borderRadius: "10px",
+                    position: "relative",
+                  }}
+                >
+                  <List
+                    sx={{
+                      width: "100%",
+                      maxWidth: 650,
+                    }}
+                  >
+                    {props.guestList.map((current, index) => (
+                      <UserInfo userInfo={current} key={index} />
+                    ))}
+                  </List>
+                </Paper>
+              )}
 
               {/* button send all mail */}
-              <div
-                className="row justify-content-end"
-                style={{ paddingRight: "10px" }}
-              >
-                <Fab
-                  variant="extended"
-                  size="medium"
-                  color="primary"
-                  className="col-4"
-                  onClick={ToggleSendMail}
-                  disabled={
-                    sentAllMail || sending || props.userList.length === 0
-                  }
+              {props.userList.length !== 0 || props.guestList.length !== 0 ? (
+                <div
+                  className="row justify-content-end"
+                  style={{ paddingRight: "10px", paddingTop: "10px" }}
                 >
-                  send all
-                  <SendIcon sx={{ ml: 1 }} ref={newUserRef} />
-                </Fab>
-              </div>
+                  <Fab
+                    variant="extended"
+                    size="medium"
+                    color="primary"
+                    className="col-4"
+                    onClick={ToggleSendMail}
+                    disabled={
+                      sentAllMail || sending || props.userList.length === 0
+                    }
+                  >
+                    send all
+                    <SendIcon sx={{ ml: 1 }} ref={newUserRef} />
+                  </Fab>
+                </div>
+              ) : (
+                <h3>Có lỗi xảy ra, hãy thử  lại trong giây lát nhé!</h3>
+              )}
             </>
           ) : (
-            // mode 2: show notifications
+            // mode 1: show notifications
             <p>{props.body}</p>
           )}
         </div>
