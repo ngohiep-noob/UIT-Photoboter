@@ -76,10 +76,12 @@ const UserInfo = (props, ref) => {
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) === false
       ) {
         console.log("invalid email!");
-        return;
+        props.setSendingStatus(3);
+        return; 
       }
       if (name === "") {
         console.error("name cannot empty!");
+        props.setSendingStatus(4);
         return;
       }
       setSending(true); // toggle mail sending spinner
@@ -98,12 +100,14 @@ const UserInfo = (props, ref) => {
             if (res.status === "success") {
               console.log("sent mail: ", res);
               setSendMailStatus(1);
+              props.setSendingStatus(1); //show status success
               setSending(false);
               resolve(true);
             }
             if (res.status === "error") {
               console.log("send mail fail: ", res);
               setSendMailStatus(2);
+              props.setSendingStatus(2);
               setSending(false);
               resolve(false);
             }
@@ -112,6 +116,7 @@ const UserInfo = (props, ref) => {
             console.error(err);
             console.log("send mail fail: ", err);
             setSendMailStatus(2);
+            props.setSendingStatus(2);
             setSending(false);
             resolve(false);
           });
@@ -199,7 +204,9 @@ const UserInfo = (props, ref) => {
             ) : (
               <ReplayIcon />
             )}
+
           </Fab>
+
           {sending && (
             <CircularProgress
               size={53}
@@ -212,6 +219,7 @@ const UserInfo = (props, ref) => {
               }}
             />
           )}
+          
         </Box>
       </ListItemIcon>
     </ListItem>
