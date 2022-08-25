@@ -25,6 +25,8 @@ import { green } from "@mui/material/colors";
 import SendMail from "./SendMail";
 import Fab from "@mui/material/Fab";
 import { ProcessContextState } from "../../App";
+import HandleRegister from "./HandeleRegister";
+
 
 const UserInfo = (props, ref) => {
   const nameRef = useRef(null);
@@ -64,7 +66,7 @@ const UserInfo = (props, ref) => {
 
   const handleSendMail = () => {
     // sendMailStatus === 0 or 2 ==> first send or resend mail
-    if(sendMailStatus === 1) {
+    if (sendMailStatus === 1) {
       return new Promise((resolve, reject) => resolve(true));
     }
     if (!sending && (sendMailStatus === 0 || sendMailStatus === 2)) {
@@ -85,6 +87,10 @@ const UserInfo = (props, ref) => {
         return new Promise((resolve, reject) => resolve(false));
       }
       setSending(true); // toggle mail sending spinner
+
+      // register and update BE model
+      HandleRegister(name + ' - ' + email, props.userInfo.avatar)
+
       // call api to send mail
       return new Promise((resolve, reject) => {
         SendMail({
@@ -136,13 +142,19 @@ const UserInfo = (props, ref) => {
   return (
     <ListItem alignItems="flex-start">
       <ListItemAvatar>
-        <Avatar alt={props.userInfo.name} src={props.userInfo.avatar} sx={{width: 56, height: 56}}/>
+        <Avatar
+          alt={props.userInfo.name}
+          src={props.userInfo.avatar}
+          sx={{ width: 56, height: 56 }}
+        />
       </ListItemAvatar>
 
       <ListItemText
         primary={
           <React.Fragment>
             <TextEdit
+              isGuest={props.isGuest}
+              index={props.index}
               firstVal={props.userInfo.name}
               ref={nameRef}
               label={"Name"}
@@ -152,13 +164,16 @@ const UserInfo = (props, ref) => {
         secondary={
           <React.Fragment>
             <TextEdit
+              isGuest={props.isGuest}
+              index={props.index}
               firstVal={props.userInfo.email}
               ref={emailRef}
               label={"Email"}
             />
           </React.Fragment>
         }
-        sx={{margin: '6px 15px 6px 15px'}}
+        secondaryTypographyProps={{ component: "span" }}
+        sx={{ margin: "6px 15px 6px 15px" }}
       />
 
       <ListItemIcon>
@@ -190,9 +205,9 @@ const UserInfo = (props, ref) => {
             color={
               sendMailStatus === 0
                 ? "warning"
-                : (sendMailStatus === 2
+                : sendMailStatus === 2
                 ? "error"
-                : "success")
+                : "success"
             }
             onClick={handleSendMail}
             sx={{ ...buttonSx }}

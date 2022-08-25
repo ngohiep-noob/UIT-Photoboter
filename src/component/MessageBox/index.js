@@ -3,7 +3,6 @@ import React, {
   useRef,
   useEffect,
   useContext,
-  forwardRef,
 } from "react";
 import { Fade } from "react-bootstrap";
 import { Paper, List, Fab } from "@mui/material";
@@ -12,18 +11,20 @@ import SendIcon from "@mui/icons-material/Send";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 
 const MessageBox = (props) => {
   const dispatch = useContext(ProcessContextDispatch);
   const context = useContext(ProcessContextState).current;
   const [sentAllMail, setSentAllMail] = useState(false);
   const [sending, setSending] = useState(false);
-  // status: 0 = default info - 1 = success - 2 = error - 3 and 4 = warming 
+  // status: default - 0 | info - 1 | success - 2 | error - 3 | warning - 4
   const [sendingStatus, setSendingStatus] = useState(0);
   const userInfoListRef = useRef(
-    // *
     new Array(props.messageOptions.userList.length).fill(null)
+  );
+  const GuestInfoListRef = useRef(
+    new Array(props.messageOptions.guestList.length).fill(null)
   );
 
   const ToggleSendMail = () => {
@@ -63,11 +64,15 @@ const MessageBox = (props) => {
 
   useEffect(() => {
     if (sending === true) {
-      Promise.all(
-        userInfoListRef.current.map((e) => {
-          return e.handleSendMail();
-        })
-      ).then((res) => {
+      const promises = [];
+      userInfoListRef.current.forEach((e) => {
+        promises.push(e.handleSendMail());
+      });
+      GuestInfoListRef.current.forEach((e) => {
+        promises.push(e.handleSendMail());
+      });
+
+      Promise.all([...promises]).then((res) => {
         const status = {
           success: 0,
           fail: 0,
@@ -76,8 +81,12 @@ const MessageBox = (props) => {
           if (r === true) status.success++;
           if (r === false) status.fail++;
         });
-        console.log("send all status:", status);
-        if (status.success === props.messageOptions.userList.length) {
+        console.log("send user:", status);
+        if (
+          status.success ===
+          props.messageOptions.userList.length +
+            props.messageOptions.guestList.length
+        ) {
           setSentAllMail(true);
           setSendingStatus(1);
         } else {
@@ -90,12 +99,12 @@ const MessageBox = (props) => {
   }, [sending]);
 
   useEffect(() => {
-    console.log(
-      "render msgBox mode ",
-      props.messageOptions.mode,
-      "show",
-      props.show
-    );
+    // console.log(
+    //   "render msgBox mode",
+    //   props.messageOptions.mode,
+    //   "show",
+    //   props.show
+    // );
     if (
       props.messageOptions.mode === 2.1 &&
       props.show &&
@@ -104,7 +113,10 @@ const MessageBox = (props) => {
       userInfoListRef.current = new Array(
         props.messageOptions.userList.length
       ).fill(null);
-      console.log("reset userListRef");
+      GuestInfoListRef.current = new Array(
+        props.messageOptions.guestList.length
+      ).fill(null);
+      console.log("reset userListRef and guestListRef");
     }
   });
 
@@ -119,11 +131,12 @@ const MessageBox = (props) => {
     return "inline-flex";
   };
 
-    useEffect(() => {
-    if(props.messageOptions.userList.length > 0){ // render default status
-        setSendingStatus(0);
+  useEffect(() => {
+    if (props.messageOptions.userList.length > 0) {
+      // render default status
+      setSendingStatus(0);
     }
-    }, [props.show])
+  }, [props.show]);
 
   return (
     <Fade in={props.show} appear={true}>
@@ -147,7 +160,7 @@ const MessageBox = (props) => {
           {props.messageOptions.mode === 2.1 && (
             // mode 2.1: render prediction
             <>
-              {/* predictions */}
+              {/* user List */}
               {props.messageOptions.userList.length > 0 && (
                 <Paper
                   elevation={0}
@@ -163,9 +176,11 @@ const MessageBox = (props) => {
                   <List sx={{ width: "100%", maxWidth: 650 }}>
                     {props.messageOptions.userList.map((e, index) => (
                       <UserInfo
+                        isGuest={false}
                         userInfo={e}
                         key={index}
-                        setSendingStatus = {setSendingStatus}
+                        index={index}
+                        setSendingStatus={setSendingStatus}
                         ref={(el) => (userInfoListRef.current[index] = el)}
                       />
                     ))}
@@ -173,8 +188,7 @@ const MessageBox = (props) => {
                 </Paper>
               )}
 
-              {/* register new user */}
-
+              {/* guest List */}
               {props.messageOptions.guestList.length > 0 && (
                 <Paper
                   elevation={0}
@@ -193,7 +207,14 @@ const MessageBox = (props) => {
                     }}
                   >
                     {props.messageOptions.guestList.map((current, index) => (
-                      <UserInfo userInfo={current} key={index} />
+                      <UserInfo
+                        isGuest={true}
+                        userInfo={current}
+                        key={index}
+                        index={index}
+                        setSendingStatus={setSendingStatus}
+                        ref={(el) => (GuestInfoListRef.current[index] = el)}
+                      />
                     ))}
                   </List>
                 </Paper>
@@ -203,15 +224,64 @@ const MessageBox = (props) => {
               {
                 <div
                   className="row justify-content-end"
-                  style={{ paddingRight: "10px", paddingTop: "10px"}}
+                  style={{ paddingRight: "10px", paddingTop: "10px" }}
                 >
-                      {sendingStatus == 0 ? <Alert variant="filled" severity="info" className="col-8" style={{width: "45%", marginRight: "200px"}}>Hãy xem lại thông tin nhé!</Alert>
-                    : (sendingStatus == 1 ? <Alert variant="filled" severity="success" className="col-8" style={{width: "45%", marginRight: "175px"}} >Nhớ check mail của mình nha!</Alert>
-                    : (sendingStatus == 2 ? <Alert variant="filled" severity="error" className="col-8" style={{width: "50%", marginRight: "170px"}} >Mình gửi mail cho bạn không được rồi!</Alert>
-                    : (sendingStatus == 3 ? <Alert variant="filled" severity="warning" className="col-8" style={{width: "50%", marginRight: "160px"}} >Gmail này chưa hợp lệ!</Alert> 
-                    : (sendingStatus == 4 ? <Alert variant="filled" severity="warning" className="col-8" style={{width: "45%", marginRight: "200px"}} >Bạn chưa điền tên!</Alert> 
-                    : <Alert variant="filled" severity="info" className="col-8" style={{width: "50%", marginRight: "85px"}} >Mời bạn đăng kí người mới</Alert> ))))}
-                        
+                  {sendingStatus === 0 ? (
+                    <Alert
+                      variant="filled"
+                      severity="info"
+                      className="col-8"
+                      style={{ width: "45%", marginRight: "200px" }}
+                    >
+                      Hãy xem lại thông tin nhé!
+                    </Alert>
+                  ) : sendingStatus === 1 ? (
+                    <Alert
+                      variant="filled"
+                      severity="success"
+                      className="col-8"
+                      style={{ width: "45%", marginRight: "175px" }}
+                    >
+                      Nhớ check mail của mình nha!
+                    </Alert>
+                  ) : sendingStatus === 2 ? (
+                    <Alert
+                      variant="filled"
+                      severity="error"
+                      className="col-8"
+                      style={{ width: "50%", marginRight: "170px" }}
+                    >
+                      Mình gửi mail cho bạn không được rồi!
+                    </Alert>
+                  ) : sendingStatus === 3 ? (
+                    <Alert
+                      variant="filled"
+                      severity="warning"
+                      className="col-8"
+                      style={{ width: "50%", marginRight: "160px" }}
+                    >
+                      Gmail này chưa hợp lệ!
+                    </Alert>
+                  ) : sendingStatus === 4 ? (
+                    <Alert
+                      variant="filled"
+                      severity="warning"
+                      className="col-8"
+                      style={{ width: "45%", marginRight: "200px" }}
+                    >
+                      Bạn chưa điền tên!
+                    </Alert>
+                  ) : (
+                    <Alert
+                      variant="filled"
+                      severity="info"
+                      className="col-8"
+                      style={{ width: "50%", marginRight: "85px" }}
+                    >
+                      Mời bạn đăng kí người mới
+                    </Alert>
+                  )}
+
                   <Fab
                     variant="extended"
                     size="medium"

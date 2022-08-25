@@ -8,7 +8,6 @@ import { Hands, HAND_CONNECTIONS } from "@mediapipe/hands";
 import isFiveTipsUp from "./service/CheckFingersUp";
 import Spinner from "./component/Spinner/index";
 import CountDownScreen from "./component/CountDown/index";
-import Toast from "./component/Toast";
 import MessageBox from "./component/MessageBox";
 import { SetSleepTime } from "./service/RedirectPage";
 
@@ -313,7 +312,7 @@ function App() {
           {/* canvas output */}
           <canvas ref={canvasRef}></canvas>
           <div id="bot-message">
-            <img src={require("./dev/image/robot.png")} id="robot" />
+            <img src={require("./dev/image/robot.png")} id="robot" alt='robot'/>
             <MessageBox
               show={showMsgBox}
               FinishSession={FinishSession}
@@ -324,8 +323,6 @@ function App() {
           {<Spinner ref={spinnerRef} />}
 
           {<CountDownScreen times={5} ref={CountDownRef} />}
-
-          {<Toast />}
         </div>
       </ProcessContextDispatch.Provider>
     </ProcessContextState.Provider>
