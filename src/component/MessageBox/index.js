@@ -12,12 +12,15 @@ import SendIcon from "@mui/icons-material/Send";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
+import Alert from '@mui/material/Alert';
 
 const MessageBox = (props) => {
   const dispatch = useContext(ProcessContextDispatch);
   const context = useContext(ProcessContextState).current;
   const [sentAllMail, setSentAllMail] = useState(false);
   const [sending, setSending] = useState(false);
+  // status: 0 = default info - 1 = success - 2 = error - 3 and 4 = warming 
+  const [sendingStatus, setSendingStatus] = useState(0);
   const userInfoListRef = useRef(
     // *
     new Array(props.messageOptions.userList.length).fill(null)
@@ -76,8 +79,10 @@ const MessageBox = (props) => {
         console.log("send all status:", status);
         if (status.success === props.messageOptions.userList.length) {
           setSentAllMail(true);
+          setSendingStatus(1);
         } else {
           setSentAllMail(false);
+          setSendingStatus(2);
         }
         setSending(false);
       });
@@ -113,6 +118,12 @@ const MessageBox = (props) => {
     }
     return "inline-flex";
   };
+
+    useEffect(() => {
+    if(props.messageOptions.userList.length > 0){ // render default status
+        setSendingStatus(0);
+    }
+    }, [props.show])
 
   return (
     <Fade in={props.show} appear={true}>
@@ -154,6 +165,7 @@ const MessageBox = (props) => {
                       <UserInfo
                         userInfo={e}
                         key={index}
+                        setSendingStatus = {setSendingStatus}
                         ref={(el) => (userInfoListRef.current[index] = el)}
                       />
                     ))}
@@ -191,8 +203,15 @@ const MessageBox = (props) => {
               {
                 <div
                   className="row justify-content-end"
-                  style={{ paddingRight: "10px", paddingTop: "10px" }}
+                  style={{ paddingRight: "10px", paddingTop: "10px"}}
                 >
+                      {sendingStatus == 0 ? <Alert variant="filled" severity="info" className="col-8" style={{width: "45%", marginRight: "200px"}}>Hãy xem lại thông tin nhé!</Alert>
+                    : (sendingStatus == 1 ? <Alert variant="filled" severity="success" className="col-8" style={{width: "45%", marginRight: "175px"}} >Nhớ check mail của mình nha!</Alert>
+                    : (sendingStatus == 2 ? <Alert variant="filled" severity="error" className="col-8" style={{width: "50%", marginRight: "170px"}} >Mình gửi mail cho bạn không được rồi!</Alert>
+                    : (sendingStatus == 3 ? <Alert variant="filled" severity="warning" className="col-8" style={{width: "50%", marginRight: "160px"}} >Gmail này chưa hợp lệ!</Alert> 
+                    : (sendingStatus == 4 ? <Alert variant="filled" severity="warning" className="col-8" style={{width: "45%", marginRight: "200px"}} >Bạn chưa điền tên!</Alert> 
+                    : <Alert variant="filled" severity="info" className="col-8" style={{width: "50%", marginRight: "85px"}} >Mời bạn đăng kí người mới</Alert> ))))}
+                        
                   <Fab
                     variant="extended"
                     size="medium"
