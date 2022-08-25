@@ -29,6 +29,7 @@ const CountDown = (props, ref) => {
 
   useEffect(() => {
     if (times === 4) {
+      console.log("capture 1");
       //call api recognize
       const imgDataURL = context.webCamRef.current.getScreenshot();
       dispatch.setRecogizedImageRef(imgDataURL);
@@ -36,14 +37,31 @@ const CountDown = (props, ref) => {
     }
 
     if (times === 1) {
+      console.log("capture 2");
       //send mail
       setTimeout(() => {
         dispatch.setShowMsgBox(false); // close notifications(from mode 1) ***
         dispatch.setFinalImageRef(CanvasToFile());
+        let header =
+          context.messageOptions.current.userList.length === 0
+            ? "Chúng ta làm quen nhé!"
+            : "Dưới đây có tên của bạn không?";
+        let mode = 2.1;
+        if (
+          context.messageOptions.current.userList.length === 0 &&
+          context.messageOptions.current.guestList.length === 0
+        ) {
+          header = 'Có gì đó sai sai!';
+          mode = 2.2;
+        }
         setTimeout(() => {
-          dispatch.setMessageOptions({ ...context.messageOptions.current, mode: 2 });
+          dispatch.setMessageOptions({
+            ...context.messageOptions.current,
+            mode,
+            header
+          });
           dispatch.setShowMsgBox(true); // re-show predictions(switch to mode 2)
-        }, 200);
+        }, 550);
       }, 1100);
     }
   }, [times]);
@@ -59,6 +77,7 @@ const CountDown = (props, ref) => {
         } else {
           clearInterval(intervalId);
           setCountDownShow(false); // clear count down
+          setTimeout(() => setTimes(props.times), 1000);
         }
       }, 1100);
     }

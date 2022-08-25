@@ -1,20 +1,55 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  forwardRef,
+} from "react";
 import { Fade } from "react-bootstrap";
 import { Paper, List, Fab } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
 import UserInfo from "./UserInfoRow";
 import SendIcon from "@mui/icons-material/Send";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { ProcessContextDispatch, ProcessContextState } from "../../App";
 
 const MessageBox = (props) => {
+  const dispatch = useContext(ProcessContextDispatch);
+  const context = useContext(ProcessContextState).current;
   const [sentAllMail, setSentAllMail] = useState(false);
   const [sending, setSending] = useState(false);
-  const userInfoListRef = useRef(new Array(props.userList.length).fill(null));
-  const newUserRef = useRef(null);
+  const userInfoListRef = useRef(
+    // *
+    new Array(props.messageOptions.userList.length).fill(null)
+  );
 
   const ToggleSendMail = () => {
     if (!sentAllMail && !sending) {
       setSending(true);
     }
+  };
+
+  const handleCloseClick = () => {
+    dispatch.setShowMsgBox(false);
+    dispatch.setAutoCloseMsgBoxRef(false); // close annually
+  };
+
+  const handleClickYesMode3 = () => {
+    dispatch.setShowMsgBox(false); // mode 3 -> mode 1
+    dispatch.setBreakProcessRef(true);
+  };
+
+  const handleClickNoMode3 = () => {
+    dispatch.setShowMsgBox(false);
+    setTimeout(() => {
+      dispatch.setMessageOptions({
+        // mode 3 -> mode 2.1
+        ...context.messageOptions.current,
+        mode: 2.1,
+        header: "Mình tiếp tục nào!",
+      });
+      dispatch.setShowMsgBox(true);
+    }, 550);
   };
 
   useEffect(() => {
@@ -39,7 +74,7 @@ const MessageBox = (props) => {
           if (r === false) status.fail++;
         });
         console.log("send all status:", status);
-        if (status.success === props.userList.length) {
+        if (status.success === props.messageOptions.userList.length) {
           setSentAllMail(true);
         } else {
           setSentAllMail(false);
@@ -49,29 +84,60 @@ const MessageBox = (props) => {
     }
   }, [sending]);
 
+  useEffect(() => {
+    console.log(
+      "render msgBox mode ",
+      props.messageOptions.mode,
+      "show",
+      props.show
+    );
+    if (
+      props.messageOptions.mode === 2.1 &&
+      props.show &&
+      props.messageOptions.header !== "Mình tiếp tục nào!"
+    ) {
+      userInfoListRef.current = new Array(
+        props.messageOptions.userList.length
+      ).fill(null);
+      console.log("reset userListRef");
+    }
+  });
+
+  const handleHiddenCloseBtn = () => {
+    if (
+      props.messageOptions.header === "Cảm ơn bạn nhé!" ||
+      props.messageOptions.mode === 2.2 ||
+      props.messageOptions.mode === 3
+    ) {
+      return "none";
+    }
+    return "inline-flex";
+  };
+
   return (
-    <Fade in={props.show} appear={true} unmountOnExit={!props.show}>
+    <Fade in={props.show} appear={true}>
       <div className="speech-bubble">
         <div className="msg-header row justify-content-between">
           <h1 className="col-10" style={{ width: "fit-content" }}>
-            {props.header}
+            {props.messageOptions.header}
           </h1>
 
           <Fab
             color="error"
             size="medium"
             className="col-1 close-msg"
-            onClick={() => props.ToggleToast()}
+            onClick={handleCloseClick}
+            sx={{ display: handleHiddenCloseBtn() }}
           >
             <CancelIcon />
           </Fab>
         </div>
         <div className="msg-body">
-          {props.mode === 2 ? (
-            // mode 2: render prediction
+          {props.messageOptions.mode === 2.1 && (
+            // mode 2.1: render prediction
             <>
               {/* predictions */}
-              {props.userList.length > 0 && (
+              {props.messageOptions.userList.length > 0 && (
                 <Paper
                   elevation={0}
                   sx={{
@@ -80,11 +146,11 @@ const MessageBox = (props) => {
                     backgroundColor: "#fefefe80",
                     borderRadius: "10px",
                     position: "relative",
-                    margin: '0 0 15px'
+                    margin: "0 0 15px",
                   }}
                 >
                   <List sx={{ width: "100%", maxWidth: 650 }}>
-                    {props.userList.map((e, index) => (
+                    {props.messageOptions.userList.map((e, index) => (
                       <UserInfo
                         userInfo={e}
                         key={index}
@@ -97,7 +163,7 @@ const MessageBox = (props) => {
 
               {/* register new user */}
 
-              {props.guestList.length > 0 && (
+              {props.messageOptions.guestList.length > 0 && (
                 <Paper
                   elevation={0}
                   sx={{
@@ -114,7 +180,7 @@ const MessageBox = (props) => {
                       maxWidth: 650,
                     }}
                   >
-                    {props.guestList.map((current, index) => (
+                    {props.messageOptions.guestList.map((current, index) => (
                       <UserInfo userInfo={current} key={index} />
                     ))}
                   </List>
@@ -122,7 +188,7 @@ const MessageBox = (props) => {
               )}
 
               {/* button send all mail */}
-              {props.userList.length !== 0 || props.guestList.length !== 0 ? (
+              {
                 <div
                   className="row justify-content-end"
                   style={{ paddingRight: "10px", paddingTop: "10px" }}
@@ -134,20 +200,51 @@ const MessageBox = (props) => {
                     className="col-4"
                     onClick={ToggleSendMail}
                     disabled={
-                      sentAllMail || sending || props.userList.length === 0
+                      sentAllMail ||
+                      sending ||
+                      props.messageOptions.userList.length === 0
                     }
                   >
                     send all
-                    <SendIcon sx={{ ml: 1 }} ref={newUserRef} />
+                    <SendIcon sx={{ ml: 1 }} />
                   </Fab>
                 </div>
-              ) : (
-                <h3>Có lỗi xảy ra, hãy thử  lại trong giây lát nhé!</h3>
-              )}
+              }
             </>
-          ) : (
+          )}
+          {props.messageOptions.mode === 2.2 && (
+            <>
+              <h3>Có lỗi xảy ra, hãy thử lại trong giây lát nhé!</h3>
+            </>
+          )}
+          {props.messageOptions.mode === 1 && (
             // mode 1: show notifications
-            <p>{props.body}</p>
+            <p>{props.messageOptions.body}</p>
+          )}
+          {props.messageOptions.mode === 3 && (
+            <div>
+              <h3>{props.messageOptions.body}</h3>
+              <div className="d-flex justify-content-evenly mt-2">
+                <Fab
+                  variant="extended"
+                  size="medium"
+                  color="success"
+                  onClick={handleClickYesMode3}
+                >
+                  đúng vậy
+                  <CheckCircleIcon sx={{ ml: 1 }} />
+                </Fab>
+                <Fab
+                  variant="extended"
+                  size="medium"
+                  color="error"
+                  onClick={handleClickNoMode3}
+                >
+                  quay lại
+                  <CancelIcon sx={{ ml: 1 }} />
+                </Fab>
+              </div>
+            </div>
           )}
         </div>
       </div>

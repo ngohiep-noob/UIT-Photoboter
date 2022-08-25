@@ -32,21 +32,27 @@ function App() {
     width: 0,
     height: 0,
   });
+  const AutoCloseMsgBoxRef = useRef(false);
+  const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
     body:
       "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
     // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
     mode: 1,
-    closeInSecs: 60,
     userList: [],
     guestList: [],
   });
 
   const [showMsgBox, setShowMsgBox] = useState(true);
-  const ToggleMessageBox = () => {
-    // open or close
-    setShowMsgBox(!showMsgBox);
+
+  const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
+    if (showMsgBox === false) {
+      messageOptions.current = msgOptions;
+      setTimeout(() => {
+        setShowMsgBox(true);
+      }, delay);
+    }
   };
   var camera = null;
 
@@ -92,10 +98,12 @@ function App() {
     if (
       fiveTipsUpRef.current &&
       isHandlingShooting.current &&
-      messageOptions.current.mode === 2 &&
-      showMsgBox == true
+      messageOptions.current.mode === 2.1 &&
+      showMsgBox === true
     ) {
-      console.log("brake session!");
+      console.log("break session!");
+      AutoCloseMsgBoxRef.current = true;
+      setShowMsgBox(false);
     }
 
     if (results.multiHandLandmarks) {
@@ -109,15 +117,6 @@ function App() {
     }
     canvasCtx.restore();
   }
-
-  const SetMsgBoxAndShow = (msgOptions, delay) => {
-    if (showMsgBox === false) {
-      messageOptions.current = msgOptions;
-      setTimeout(() => {
-        setShowMsgBox(true);
-      }, delay);
-    }
-  };
 
   useEffect(() => {
     const { innerWidth: w, innerHeight: h } = window;
@@ -161,27 +160,65 @@ function App() {
     camera.start();
   }, []);
 
+  const FinishSession = (delay = 5000) => {
+    // finish session ==> ready for new session in N(s)
+    setTimeout(() => {
+      isHandlingShooting.current = false;
+      console.log("refresh session");
+      setShowMsgBox(false);
+    }, delay);
+
+    // re-show welcome statement after complete session
+    // SetMsgBoxAndShow(
+    //   {
+    //     ...messageOptions.current,
+    //     header: "Xin chào!",
+    //     body:
+    //       "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
+    //     userList: [],
+    //     guestList: [],
+    //     mode: 1,
+    //   },
+    //   delay + 550
+    // );
+  };
+
   useEffect(() => {
     if (showMsgBox === false) {
-      if (messageOptions.current.mode === 2) {
+      // close by click X button
+      if (messageOptions.current.mode === 2.1 && !AutoCloseMsgBoxRef.current) {
         sleepIdRef.current = SetSleepTime(300);
-        // close from mode 2(predictions) ==> refresh session
+        // close from mode 2.1(predictions) ==> refresh session
         SetMsgBoxAndShow(
           {
             header: "Cảm ơn bạn nhé!",
             body: "Hãy chờ trong giây lát cho lần sử  dụng tiếp theo nhé!",
             mode: 1,
-            closeInSecs: 60,
             userList: [],
             guestList: [],
+          },
+          550
+        );
+        return;
+      }
+      // close automatically
+      if (messageOptions.current.mode === 2.1 && AutoCloseMsgBoxRef.current) {
+        SetMsgBoxAndShow(
+          {
+            ...messageOptions.current,
+            mode: 3,
+            header: "Xin chào",
+            body: "Có vẻ bạn muốn chụp hình lại phải hong?",
           },
           550
         );
       }
       // user close welcome statement
       if (
-        messageOptions.current.mode === 1 &&
-        isHandlingShooting.current === false
+        (messageOptions.current.mode === 1 &&
+          isHandlingShooting.current === false &&
+          !AutoCloseMsgBoxRef.current) ||
+        messageOptions.current.mode === 2.2
       ) {
         SetMsgBoxAndShow(
           {
@@ -189,6 +226,22 @@ function App() {
             header: "Xin chào!",
             body:
               "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
+            mode: 1,
+          },
+          550
+        );
+        return;
+      }
+      if (messageOptions.current.mode === 3 && breakProcessRef.current) {
+        sleepIdRef.current = SetSleepTime(300);
+        breakProcessRef.current = false;
+        setTimeout(() => (isHandlingShooting.current = false), 2000);
+        SetMsgBoxAndShow(
+          {
+            ...messageOptions.current,
+            header: "Hãy vào vị trí!",
+            body: "Giơ bàn tay lên để  chụp hình nhé!",
+            mode: 1,
           },
           550
         );
@@ -199,29 +252,9 @@ function App() {
       if (
         (messageOptions.current.mode === 1 &&
           messageOptions.current.header === "Cảm ơn bạn nhé!") ||
-        (messageOptions.current.mode === 2 &&
-          messageOptions.current.header === "Có gì đó sai sai!")
+        messageOptions.current.mode === 2.2
       ) {
-        // finish session ==> ready for new session in 5s
-        setTimeout(() => {
-          isHandlingShooting.current = false;
-          console.log("refresh session");
-          setShowMsgBox(false);
-        }, 5000);
-
-        // re-show welcome statement after complete session
-        SetMsgBoxAndShow(
-          {
-            ...messageOptions.current,
-            header: "Xin chào!",
-            body:
-              "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
-            userList: [],
-            guestList: [],
-            mode: 1,
-          },
-          5000 + 550
-        );
+        FinishSession();
       }
     }
   }, [showMsgBox]);
@@ -234,6 +267,8 @@ function App() {
     recogizedImageRef,
     firstDrawRef,
     messageOptions,
+    breakProcessRef,
+    AutoCloseMsgBoxRef,
   });
   const dispatch = {
     setIsHandlingShooting: (curVal) => {
@@ -253,6 +288,13 @@ function App() {
     },
     setShowMsgBox: (val) => {
       setShowMsgBox(val);
+    },
+    FinishSessionAndNotification: FinishSession,
+    setBreakProcessRef: (val) => {
+      breakProcessRef.current = val;
+    },
+    setAutoCloseMsgBoxRef: (val) => {
+      AutoCloseMsgBoxRef.current = val;
     },
   };
 
@@ -274,12 +316,9 @@ function App() {
             <img src={require("./dev/image/robot.png")} id="robot" />
             <MessageBox
               show={showMsgBox}
-              header={messageOptions.current.header}
-              ToggleToast={ToggleMessageBox}
-              body={messageOptions.current.body}
-              mode={messageOptions.current.mode}
-              userList={messageOptions.current.userList}
-              guestList={messageOptions.current.guestList}
+              FinishSession={FinishSession}
+              SetMsgBoxAndShow={SetMsgBoxAndShow}
+              messageOptions={messageOptions.current}
             />
           </div>
           {<Spinner ref={spinnerRef} />}

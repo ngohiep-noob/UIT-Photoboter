@@ -32,15 +32,11 @@ const HandleRecognize = (imgDataURL, dispatch, context) => {
       console.log("recogized!!!");
       console.log("user: ", userList);
       console.log("guest: ", guestList);
-      const header =
-        userList.length === 0
-          ? "Chúng ta làm quen nhé!"
-          : "Dưới đây có tên của bạn không?";
+
       dispatch.setMessageOptions({
         ...context.messageOptions.current,
-        userList: userList,
-        guestList: guestList,
-        header: header,
+        userList,
+        guestList,
       });
     })
     .catch((err) => {
@@ -48,7 +44,7 @@ const HandleRecognize = (imgDataURL, dispatch, context) => {
       dispatch.setMessageOptions({
         ...context.messageOptions.current,
         userList: [],
-        header: "Có gì đó sai sai!",
+        guestList: [],
       });
     });
 };
