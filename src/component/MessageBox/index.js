@@ -40,11 +40,13 @@ const MessageBox = (props) => {
 
   const handleClickYesMode3 = () => {
     dispatch.setShowMsgBox(false); // mode 3 -> mode 1
+    dispatch.setAutoCloseMsgBoxRef(true);
     dispatch.setBreakProcessRef(true);
   };
 
   const handleClickNoMode3 = () => {
     dispatch.setShowMsgBox(false);
+    dispatch.setAutoCloseMsgBoxRef(false);
     setTimeout(() => {
       dispatch.setMessageOptions({
         // mode 3 -> mode 2.1

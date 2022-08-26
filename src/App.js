@@ -31,7 +31,7 @@ function App() {
     width: 0,
     height: 0,
   });
-  const AutoCloseMsgBoxRef = useRef(false);
+  const AutoCloseMsgBoxRef = useRef(true);
   const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
@@ -42,7 +42,6 @@ function App() {
     userList: [],
     guestList: [],
   });
-
   const [showMsgBox, setShowMsgBox] = useState(true);
 
   const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
@@ -94,15 +93,16 @@ function App() {
       isHandlingShooting.current = true;
       CountDownRef.current.setCountDownShow(true);
     }
+
     if (
+      showMsgBox === true && 
       fiveTipsUpRef.current &&
       isHandlingShooting.current &&
       messageOptions.current.mode === 2.1 &&
-      showMsgBox === true
+      AutoCloseMsgBoxRef.current === true
     ) {
       console.log("break session!");
-      AutoCloseMsgBoxRef.current = true;
-      setShowMsgBox(false);
+      setShowMsgBox(false);      
     }
 
     if (results.multiHandLandmarks) {
@@ -164,22 +164,9 @@ function App() {
     setTimeout(() => {
       isHandlingShooting.current = false;
       console.log("refresh session");
+      
       setShowMsgBox(false);
     }, delay);
-
-    // re-show welcome statement after complete session
-    // SetMsgBoxAndShow(
-    //   {
-    //     ...messageOptions.current,
-    //     header: "Xin chào!",
-    //     body:
-    //       "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
-    //     userList: [],
-    //     guestList: [],
-    //     mode: 1,
-    //   },
-    //   delay + 550
-    // );
   };
 
   useEffect(() => {
@@ -234,7 +221,10 @@ function App() {
       if (messageOptions.current.mode === 3 && breakProcessRef.current) {
         sleepIdRef.current = SetSleepTime(300);
         breakProcessRef.current = false;
-        setTimeout(() => (isHandlingShooting.current = false), 2000);
+        setTimeout(() => {
+          console.log('refresh session')
+          
+          isHandlingShooting.current = false}, 2000);
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -254,6 +244,11 @@ function App() {
         messageOptions.current.mode === 2.2
       ) {
         FinishSession();
+      }
+      if(messageOptions.current.mode === 2.1 && AutoCloseMsgBoxRef.current === false) {
+        setTimeout(() => {
+          AutoCloseMsgBoxRef.current = true;
+        }, 700)
       }
     }
   }, [showMsgBox]);
@@ -312,7 +307,11 @@ function App() {
           {/* canvas output */}
           <canvas ref={canvasRef}></canvas>
           <div id="bot-message">
-            <img src={require("./dev/image/robot.png")} id="robot" alt='robot'/>
+            <img
+              src={require("./dev/image/robot.png")}
+              id="robot"
+              alt="robot"
+            />
             <MessageBox
               show={showMsgBox}
               FinishSession={FinishSession}
