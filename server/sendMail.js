@@ -5,7 +5,7 @@ const CLIENT_SECRET = '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';
 const REFRESH_TOKEN = '1//04ZBxSFEdEs-sCgYIARAAGAQSNwF-L9Ir0bbsPLwGr8LIevvEq8mKWEK5IjibSn6GQrseTjJMPtZGvY9Y-unwlgHJB_DpDDNZHuM'
 const ACCESS_TOKEN = 'ya29.A0AVA9y1uOtKulvKbevf7bxPTR8qWAsTBkcr39f6VJtdlMezRGmbhqrwhOcrykmqb9en0B30yphqUjYiQCdhw-iYK68G6Ko3FLr9ul_2VlSG_h9KRxDkz_OyEqEeYoI4C8SkiCaRc8OERQqDHH0EXxCyNWlxcHaCgYKATASATASFQE65dr8-q6v9S-wjS8HnLvHNMSktg0163'
 
-const SendMail = async (recipient, imgBase64, title, textContent) => {
+const SendMail = async (recipient, imgBase64, title) => {
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 465,
@@ -24,7 +24,11 @@ const SendMail = async (recipient, imgBase64, title, textContent) => {
         from: 'UIT - Photoboter <uit.photoboter@gmail.com>',
         to: recipient,
         subject: title,
-        html: `<h2>${textContent}</h2>`, // html body
+        html: `<h2>Chào bạn👋,</h2>
+        <p>Đây là ảnh chụp tại Kiosk trường ĐH Công nghệ thông tin của bạn.</p>
+        <p>Chúc bạn có những giây phút trải nghiệm thú vị tại UIT🥰</p>
+        <p><b>UIT Photobooth Team, MMLab 👨‍💻</b></p>
+        `, // html body
         attachments: [
             {
                 filename: 'image.jpeg',

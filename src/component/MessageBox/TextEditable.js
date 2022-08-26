@@ -40,7 +40,7 @@ const AutoFillEmail = (props) => {
   return (
     <div
       style={{
-        width: "80px",
+        width: "100px",
         display: "flex",
         justifyContent: "space-between",
       }}
@@ -48,7 +48,7 @@ const AutoFillEmail = (props) => {
       <Typography
         variant="caption"
         onClick={handleClick}
-        sx={{ textDecoration: "underline" }}
+        sx={{ textDecoration: "underline", color: '#000', fontSize: '15px' }}
       >
         @uit
       </Typography>
@@ -56,7 +56,7 @@ const AutoFillEmail = (props) => {
       <Typography
         variant="caption"
         onClick={handleClick}
-        sx={{ textDecoration: "underline" }}
+        sx={{ textDecoration: "underline", color: '#000', fontSize: '15px' }}
       >
         @gmail
       </Typography>
@@ -110,7 +110,7 @@ const TextEditor = (props, ref) => {
     <>
       {edit ? (
         props.label === "Name" ? (
-          <FormControl sx={{ width: "350px" }}>
+          <FormControl sx={{ width: "370px" }}>
             <InputLabel htmlFor="name-input">{props.label}</InputLabel>
             <OutlinedInput
               id="name-input"
@@ -122,7 +122,7 @@ const TextEditor = (props, ref) => {
             />
           </FormControl>
         ) : (
-          <FormControl sx={{ width: "350px" }}>
+          <FormControl sx={{ width: "370px" }}>
             <InputLabel htmlFor="email-input">{props.label}</InputLabel>
             <OutlinedInput
               id="email-input"

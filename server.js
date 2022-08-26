@@ -15,8 +15,8 @@ app.get("/", function(req, res) {
 
 app.post('/send-mail', async (req, res) => { 
   try {
-    const {recipient, imgBase64, title, textContent} = req.body;
-    const sendMailResp = await SendMail(recipient, imgBase64, title, textContent);
+    const {recipient, imgBase64, title} = req.body;
+    const sendMailResp = await SendMail(recipient, imgBase64, title);
     return res.json({
       status: 'success',
       data: sendMailResp

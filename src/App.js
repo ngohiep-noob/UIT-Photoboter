@@ -31,7 +31,7 @@ function App() {
     width: 0,
     height: 0,
   });
-  const AutoCloseMsgBoxRef = useRef(true);
+  const AutoCloseMsgBoxRef = useRef(false);
   const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
@@ -106,6 +106,7 @@ function App() {
       canvasRef.current.width,
       canvasRef.current.height
     );
+    // fiveTipsUpRef.current = true;
 
     if (fiveTipsUpRef.current && !isHandlingShooting.current) {
       isHandlingShooting.current = true;
@@ -119,7 +120,7 @@ function App() {
       messageOptions.current.mode === 2.1 &&
       AutoCloseMsgBoxRef.current === true
     ) {
-      console.log("break session!");
+      console.log("interception!");
       setShowMsgBox(false);
     }
 
@@ -173,6 +174,7 @@ function App() {
     setTimeout(() => {
       isHandlingShooting.current = false;
       console.log("refresh session");
+      AutoCloseMsgBoxRef.current = false;
       finalImageRef.current = "";
       setShowMsgBox(false);
     }, delay);
@@ -232,6 +234,7 @@ function App() {
         breakProcessRef.current = false;
         setTimeout(() => {
           console.log("refresh session");
+          AutoCloseMsgBoxRef.current = false;
           finalImageRef.current = "";
           isHandlingShooting.current = false;
         }, 2000);
@@ -261,7 +264,7 @@ function App() {
       ) {
         setTimeout(() => {
           AutoCloseMsgBoxRef.current = true;
-        }, 700);
+        }, 1000);
       }
     }
   }, [showMsgBox]);

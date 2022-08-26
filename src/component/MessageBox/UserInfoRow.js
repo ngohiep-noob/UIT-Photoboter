@@ -96,8 +96,7 @@ const UserInfo = (props, ref) => {
         SendMail({
           recipient: email,
           imgBase64: context.finalImageRef.current,
-          title: `🤖 UIT photoboter xin tặng ${name} một tấm hình`,
-          textContent: "Người trong hình thật xinh đẹp 🥰",
+          title: `👀 UIT photoboter xin tặng ${name} một tấm hình 🥳`,
         })
           .then((res) => {
             return res.json();
