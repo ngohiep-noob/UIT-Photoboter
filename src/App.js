@@ -69,20 +69,38 @@ function App() {
     }
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    canvasCtx.drawImage(
-      results.image,
-      0,
-      0,
-      canvasElement.width,
-      canvasElement.height
-    );
-    canvasCtx.drawImage(
-      document.getElementById("img-frame"),
-      0,
-      0,
-      canvasElement.width,
-      canvasElement.height
-    );
+
+    let img = results.image;
+    if (finalImageRef.current !== "") {
+      let finalImg = new Image();
+      finalImg.src = finalImageRef.current;
+      img = finalImg;
+    }
+
+    canvasCtx.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
+
+    if (finalImageRef.current === "") {
+      canvasCtx.drawImage(
+        document.getElementById("img-frame"),
+        0,
+        0,
+        canvasElement.width,
+        canvasElement.height
+      );
+      if (results.multiHandLandmarks) {
+        for (const landmarks of results.multiHandLandmarks) {
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+            color: "#00FF00",
+            lineWidth: 5,
+          });
+          drawLandmarks(canvasCtx, landmarks, {
+            color: "#FF0000",
+            lineWidth: 2,
+          });
+        }
+      }
+    }
+
     fiveTipsUpRef.current = isFiveTipsUp(
       results.multiHandLandmarks,
       canvasRef.current.width,
@@ -95,25 +113,16 @@ function App() {
     }
 
     if (
-      showMsgBox === true && 
+      showMsgBox === true &&
       fiveTipsUpRef.current &&
       isHandlingShooting.current &&
       messageOptions.current.mode === 2.1 &&
       AutoCloseMsgBoxRef.current === true
     ) {
       console.log("break session!");
-      setShowMsgBox(false);      
+      setShowMsgBox(false);
     }
 
-    if (results.multiHandLandmarks) {
-      for (const landmarks of results.multiHandLandmarks) {
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-          color: "#00FF00",
-          lineWidth: 5,
-        });
-        drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
-      }
-    }
     canvasCtx.restore();
   }
 
@@ -164,7 +173,7 @@ function App() {
     setTimeout(() => {
       isHandlingShooting.current = false;
       console.log("refresh session");
-      
+      finalImageRef.current = "";
       setShowMsgBox(false);
     }, delay);
   };
@@ -222,9 +231,10 @@ function App() {
         sleepIdRef.current = SetSleepTime(300);
         breakProcessRef.current = false;
         setTimeout(() => {
-          console.log('refresh session')
-          
-          isHandlingShooting.current = false}, 2000);
+          console.log("refresh session");
+          finalImageRef.current = "";
+          isHandlingShooting.current = false;
+        }, 2000);
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -245,10 +255,13 @@ function App() {
       ) {
         FinishSession();
       }
-      if(messageOptions.current.mode === 2.1 && AutoCloseMsgBoxRef.current === false) {
+      if (
+        messageOptions.current.mode === 2.1 &&
+        AutoCloseMsgBoxRef.current === false
+      ) {
         setTimeout(() => {
           AutoCloseMsgBoxRef.current = true;
-        }, 700)
+        }, 700);
       }
     }
   }, [showMsgBox]);
