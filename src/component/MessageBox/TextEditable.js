@@ -4,14 +4,71 @@ import React, {
   useImperativeHandle,
   useState,
 } from "react";
-import { TextField, Typography } from "@mui/material";
+import {
+  Typography,
+  InputAdornment,
+  OutlinedInput,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
+
+const AutoFillEmail = (props) => {
+  // props = {getData, setData}
+  const handleClick = (e) => {
+    let currentText = props.getData();
+
+    if (currentText !== "" && currentText.includes("@")) {
+      currentText = currentText.split("@")[0];
+    }
+
+    if (e.target.innerText === "@uit") {
+      if (/^[\d]*[\d*]$/.test(currentText)) {
+        props.setData(currentText + "@gm.uit.edu.vn");
+      }
+      if (/^[\D]*[\D*]$/.test(currentText)) {
+        props.setData(currentText + "@uit.edu.vn");
+      }
+    }
+
+    if (e.target.innerText === "@gmail") {
+      if (/^\w/.test(currentText)) {
+        props.setData(currentText + "@gmail.com");
+      }
+    }
+  };
+  return (
+    <div
+      style={{
+        width: "80px",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+    >
+      <Typography
+        variant="caption"
+        onClick={handleClick}
+        sx={{ textDecoration: "underline" }}
+      >
+        @uit
+      </Typography>
+
+      <Typography
+        variant="caption"
+        onClick={handleClick}
+        sx={{ textDecoration: "underline" }}
+      >
+        @gmail
+      </Typography>
+    </div>
+  );
+};
 
 const TextEditor = (props, ref) => {
   const dispatch = useContext(ProcessContextDispatch);
   const context = useContext(ProcessContextState).current;
   const [edit, toggleEdit] = useState(false);
-  const [data, setData] = useState(props.firstVal);
+  const [data, setData] = useState(props.firstVal || "");
 
   const UpdateData = (val) => {
     let dataList;
@@ -52,13 +109,36 @@ const TextEditor = (props, ref) => {
   return (
     <>
       {edit ? (
-        <TextField
-          label={props.label}
-          onChange={HandleChange}
-          size="small"
-          value={data}
-          sx={{ my: 1 }}
-        />
+        props.label === "Name" ? (
+          <FormControl sx={{ width: "350px" }}>
+            <InputLabel htmlFor="name-input">{props.label}</InputLabel>
+            <OutlinedInput
+              id="name-input"
+              label={props.label}
+              onChange={HandleChange}
+              size="small"
+              value={data}
+              sx={{ my: 1 }}
+            />
+          </FormControl>
+        ) : (
+          <FormControl sx={{ width: "350px" }}>
+            <InputLabel htmlFor="email-input">{props.label}</InputLabel>
+            <OutlinedInput
+              id="email-input"
+              label={props.label}
+              onChange={HandleChange}
+              size="small"
+              value={data}
+              sx={{ my: 1 }}
+              endAdornment={
+                <InputAdornment position="end">
+                  <AutoFillEmail setData={setData} getData={() => data} />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+        )
       ) : (
         <Typography
           variant={props.label === "Name" ? "h6" : "caption"}
