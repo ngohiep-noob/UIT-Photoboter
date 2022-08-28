@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useContext,
-} from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Fade } from "react-bootstrap";
 import { Paper, List, Fab } from "@mui/material";
 import UserInfo from "./UserInfoRow";
@@ -12,6 +7,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import Alert from "@mui/material/Alert";
+import PlayAudio from "../../util/PlayAudio";
 
 const MessageBox = (props) => {
   const dispatch = useContext(ProcessContextDispatch);
@@ -48,6 +44,7 @@ const MessageBox = (props) => {
     dispatch.setShowMsgBox(false);
     dispatch.setAutoCloseMsgBoxRef(false);
     setTimeout(() => {
+      PlayAudio("continue");
       dispatch.setMessageOptions({
         // mode 3 -> mode 2.1
         ...context.messageOptions.current,

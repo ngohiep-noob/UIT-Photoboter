@@ -10,6 +10,7 @@ import Spinner from "./component/Spinner/index";
 import CountDownScreen from "./component/CountDown/index";
 import MessageBox from "./component/MessageBox";
 import { SetSleepTime } from "./service/RedirectPage";
+import PlayAudio from "./util/PlayAudio";
 
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
@@ -40,7 +41,7 @@ function App() {
     // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
     mode: 1,
     userList: [],
-    guestList: [],
+    guestList: []
   });
   const [showMsgBox, setShowMsgBox] = useState(true);
 
@@ -65,6 +66,7 @@ function App() {
     if (firstDrawRef.current) {
       firstDrawRef.current = false;
       console.log("first draw");
+      PlayAudio('welcome');
       spinnerRef.current.toggleSpinner();
     }
     canvasCtx.save();
@@ -186,6 +188,7 @@ function App() {
       if (messageOptions.current.mode === 2.1 && !AutoCloseMsgBoxRef.current) {
         sleepIdRef.current = SetSleepTime(300);
         // close from mode 2.1(predictions) ==> refresh session
+        PlayAudio('thankyou')
         SetMsgBoxAndShow(
           {
             header: "Cảm ơn bạn nhé!",
@@ -200,6 +203,7 @@ function App() {
       }
       // close automatically
       if (messageOptions.current.mode === 2.1 && AutoCloseMsgBoxRef.current) {
+        PlayAudio('question')
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -217,6 +221,7 @@ function App() {
           !AutoCloseMsgBoxRef.current) ||
         messageOptions.current.mode === 2.2
       ) {
+        PlayAudio('welcome')
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -238,6 +243,7 @@ function App() {
           finalImageRef.current = "";
           isHandlingShooting.current = false;
         }, 2000);
+        PlayAudio('instruction')
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -259,12 +265,13 @@ function App() {
         FinishSession();
       }
       if (
+        // prevent auto close after cancel interception
         messageOptions.current.mode === 2.1 &&
         AutoCloseMsgBoxRef.current === false
       ) {
         setTimeout(() => {
           AutoCloseMsgBoxRef.current = true;
-        }, 1000);
+        }, 10000);
       }
     }
   }, [showMsgBox]);

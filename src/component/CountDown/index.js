@@ -9,6 +9,7 @@ import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import HandleRecognize from "./HandleRecognize";
 import { ClearSleepTime } from "../../service/RedirectPage";
 import { Backdrop } from "@mui/material";
+import PlayAudio from "../../util/PlayAudio";
 
 const CountDown = (props, ref) => {
   const [times, setTimes] = useState(props.times);
@@ -42,23 +43,30 @@ const CountDown = (props, ref) => {
       setTimeout(() => {
         dispatch.setShowMsgBox(false); // close notifications(from mode 1) ***
         dispatch.setFinalImageRef(CanvasToFile());
+        let audio =
+          context.messageOptions.current.userList.length === 0
+            ? "makefriend"
+            : "confirm";
         let header =
           context.messageOptions.current.userList.length === 0
             ? "Chúng ta làm quen nhé!"
             : "Dưới đây có tên của bạn không?";
+
         let mode = 2.1;
         if (
           context.messageOptions.current.userList.length === 0 &&
           context.messageOptions.current.guestList.length === 0
         ) {
-          header = 'Có gì đó sai sai!';
+          audio = "sorry";
+          header = "Có gì đó sai sai!";
           mode = 2.2;
         }
+        PlayAudio(audio)
         setTimeout(() => {
           dispatch.setMessageOptions({
             ...context.messageOptions.current,
             mode,
-            header
+            header,
           });
           dispatch.setShowMsgBox(true); // re-show predictions(switch to mode 2)
         }, 550);
