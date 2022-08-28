@@ -7,38 +7,63 @@ import question from "../audio/question.mp3";
 import ctn from "../audio/continue.mp3";
 import confirm from "../audio/confirm.mp3";
 
+let audio = new Audio();
 const PlayAudio = (type) => {
   switch (type) {
     case "welcome":
-      new Audio(welcome).play();
+      if (audio.paused) {
+        audio.src = welcome;
+        audio.play();
+      }
       break;
 
     case "sorry":
-      new Audio(sorry).play();
+      if (audio.paused) {
+        audio.src = sorry;
+        audio.play();
+      }
       break;
 
     case "thankyou":
-      new Audio(thankyou).play();
+      if (audio.paused) {
+        audio.src = thankyou;
+        audio.play();
+      }
       break;
 
     case "instruction":
-      new Audio(instruction).play();
+      if (audio.paused) {
+        audio.src = instruction;
+        audio.play();
+      }
       break;
 
     case "makefriend":
-      new Audio(makefriend).play();
+      if (audio.paused) {
+        audio.src = makefriend;
+        audio.play();
+      }
       break;
 
     case "question":
-      new Audio(question).play();
+      if (audio.paused) {
+        audio.src = question;
+        audio.play();
+      }
       break;
-      
+
     case "confirm":
-      new Audio(confirm).play();
+      if (audio.paused) {
+        audio.src = confirm;
+        audio.play();
+      }
       break;
 
     case "continue":
-      new Audio(ctn).play();
+      if (audio.paused) {
+        audio.src = ctn;
+        audio.play();
+      }
       break;
 
     default:
