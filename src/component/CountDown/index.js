@@ -61,7 +61,7 @@ const CountDown = (props, ref) => {
           header = "Có gì đó sai sai!";
           mode = 2.2;
         }
-        PlayAudio(audio)
+        PlayAudio(audio);
         setTimeout(() => {
           dispatch.setMessageOptions({
             ...context.messageOptions.current,
@@ -70,6 +70,11 @@ const CountDown = (props, ref) => {
           });
           dispatch.setShowMsgBox(true); // re-show predictions(switch to mode 2)
         }, 550);
+        setTimeout(() => {
+          console.log('run hand tracking')
+          dispatch.setStopCheckHand(false)
+          dispatch.setBreakPermission(true);
+        }, 2000);
       }, 1100);
     }
   }, [times]);

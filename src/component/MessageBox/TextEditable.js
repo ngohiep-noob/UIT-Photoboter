@@ -113,9 +113,15 @@ const TextEditor = (props, ref) => {
     setData: UpdateData,
   }));
 
-  const HandleChange = (e) => {
+  const HandleChange = async(e) => {
     UpdateData(e.target.value);
-  };
+    if(e.target.value[e.target.value.length - 1] === '@') {
+      const res = await GetNameById(e.target.value.split('@')[0]);
+      if (res.code === 1 && res.data.hoten !== null) {
+        props.setNameField(res.data.hoten);
+      }
+    }
+  }; 
 
   return (
     <>
@@ -142,6 +148,7 @@ const TextEditor = (props, ref) => {
               size="small"
               value={data}
               sx={{ my: 1 }}
+              autoFocus={true}
               endAdornment={
                 <InputAdornment position="end">
                   <AutoFillEmail

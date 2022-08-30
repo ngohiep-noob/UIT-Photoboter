@@ -11,7 +11,7 @@ import CountDownScreen from "./component/CountDown/index";
 import MessageBox from "./component/MessageBox";
 import { SetSleepTime } from "./service/RedirectPage";
 import PlayAudio from "./util/PlayAudio";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Fab } from "@mui/material";
 
 export const ProcessContextState = createContext();
@@ -34,7 +34,8 @@ function App() {
     width: 0,
     height: 0,
   });
-  const AutoCloseMsgBoxRef = useRef(false);
+  const stopCheckHandRef = useRef(false);
+  const AutoCloseMsgBoxRef = useRef(true);
   const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
@@ -45,6 +46,7 @@ function App() {
     userList: [],
     guestList: [],
   });
+  const breakPermission = useRef(true);
   const [showMsgBox, setShowMsgBox] = useState(true);
 
   const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
@@ -105,15 +107,21 @@ function App() {
       }
     }
 
-    fiveTipsUpRef.current = isFiveTipsUp(
-      results.multiHandLandmarks,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
-    // fiveTipsUpRef.current = true;
+    if (stopCheckHandRef.current === false) {
+      fiveTipsUpRef.current = isFiveTipsUp(
+        results.multiHandLandmarks,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+      // fiveTipsUpRef.current = true;
+    } else {
+      fiveTipsUpRef.current = false;
+    }
 
     if (fiveTipsUpRef.current && !isHandlingShooting.current) {
       isHandlingShooting.current = true;
+      console.log("stop hand tracking");
+      stopCheckHandRef.current = true;
       CountDownRef.current.setCountDownShow(true);
     }
 
@@ -122,10 +130,15 @@ function App() {
       fiveTipsUpRef.current &&
       isHandlingShooting.current &&
       messageOptions.current.mode === 2.1 &&
-      AutoCloseMsgBoxRef.current === true
+      breakPermission.current === true
     ) {
       console.log("interception!");
+      AutoCloseMsgBoxRef.current = true;
       setShowMsgBox(false);
+      breakPermission.current = false;
+      // setTimeout(() => {
+      //   console.log('close for interception')
+      // }, 1000)
     }
 
     canvasCtx.restore();
@@ -142,7 +155,7 @@ function App() {
       screenSize.current.height = h;
       screenSize.current.width = h * (4 / 3);
     }
-
+    console.log("run hand tracking");
     const hands = new Hands({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -178,7 +191,7 @@ function App() {
     setTimeout(() => {
       isHandlingShooting.current = false;
       console.log("refresh session");
-      AutoCloseMsgBoxRef.current = false;
+      AutoCloseMsgBoxRef.current = true;
       finalImageRef.current = "";
       setShowMsgBox(false);
     }, delay);
@@ -187,9 +200,10 @@ function App() {
   useEffect(() => {
     if (showMsgBox === false) {
       // close by click X button
+      // console.log(messageOptions.current.mode, AutoCloseMsgBoxRef.current)
       if (messageOptions.current.mode === 2.1 && !AutoCloseMsgBoxRef.current) {
         sleepIdRef.current = SetSleepTime(300);
-        // close from mode 2.1(predictions) ==> refresh session
+        console.log("1");
         PlayAudio("thankyou");
         SetMsgBoxAndShow(
           {
@@ -216,11 +230,10 @@ function App() {
           550
         );
       }
-      // user close welcome statement
+      // show welcome statement
       if (
         (messageOptions.current.mode === 1 &&
-          isHandlingShooting.current === false &&
-          !AutoCloseMsgBoxRef.current) ||
+          isHandlingShooting.current === false) ||
         messageOptions.current.mode === 2.2
       ) {
         PlayAudio("welcome");
@@ -266,15 +279,15 @@ function App() {
       ) {
         FinishSession();
       }
-      if (
-        // prevent auto close after cancel interception
-        messageOptions.current.mode === 2.1 &&
-        AutoCloseMsgBoxRef.current === false
-      ) {
-        setTimeout(() => {
-          AutoCloseMsgBoxRef.current = true;
-        }, 10000);
-      }
+      // if (
+      //   // prevent auto close after cancel interception
+      //   messageOptions.current.mode === 2.1 &&
+      //   AutoCloseMsgBoxRef.current === false
+      // ) {
+      //   setTimeout(() => {
+      //     AutoCloseMsgBoxRef.current = true;
+      //   }, 10000);
+      // }
     }
   }, [showMsgBox]);
 
@@ -288,8 +301,16 @@ function App() {
     messageOptions,
     breakProcessRef,
     AutoCloseMsgBoxRef,
+    stopCheckHandRef,
+    breakPermission,
   });
   const dispatch = {
+    setBreakPermission: (cur) => {
+      context.current.breakPermission.current = cur;
+    },
+    setStopCheckHand: (cur) => {
+      context.current.stopCheckHandRef.current = cur;
+    },
     setIsHandlingShooting: (curVal) => {
       context.current.isHandlingShooting.current = curVal;
     },
@@ -333,8 +354,8 @@ function App() {
             color="primary"
             sx={{
               position: "absolute",
-              top: '10px',
-              left: '10px',
+              top: "10px",
+              left: "10px",
             }}
             href="http://map.mmlab.uit.edu.vn"
           >

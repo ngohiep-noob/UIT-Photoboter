@@ -36,7 +36,7 @@ app.post("/get-name", async (req, res) => {
     const resp = await GetNameById(req.body.username);
     return res.json(resp);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.json({
       status: "error",
       code: 0,

@@ -30,19 +30,20 @@ const MessageBox = (props) => {
   };
 
   const handleCloseClick = () => {
-    dispatch.setShowMsgBox(false);
     dispatch.setAutoCloseMsgBoxRef(false); // close annually
+    dispatch.setShowMsgBox(false);
   };
 
   const handleClickYesMode3 = () => {
     dispatch.setShowMsgBox(false); // mode 3 -> mode 1
-    dispatch.setAutoCloseMsgBoxRef(true);
     dispatch.setBreakProcessRef(true);
+    setTimeout(() => {
+      dispatch.setBreakPermission(true);
+    }, 3000);
   };
 
   const handleClickNoMode3 = () => {
     dispatch.setShowMsgBox(false);
-    dispatch.setAutoCloseMsgBoxRef(false);
     setTimeout(() => {
       PlayAudio("continue");
       dispatch.setMessageOptions({
@@ -53,6 +54,9 @@ const MessageBox = (props) => {
       });
       dispatch.setShowMsgBox(true);
     }, 550);
+    setTimeout(() => {
+      dispatch.setBreakPermission(true);
+    }, 3000);
   };
 
   useEffect(() => {
