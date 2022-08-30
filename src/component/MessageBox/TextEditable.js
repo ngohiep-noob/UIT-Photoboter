@@ -12,10 +12,11 @@ import {
   FormControl,
 } from "@mui/material";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
+import GetNameById from "../../util/GetNameByID";
 
 const AutoFillEmail = (props) => {
   // props = {getData, setData}
-  const handleClick = (e) => {
+  const handleClick = async (e) => {
     let currentText = props.getData();
 
     if (currentText !== "" && currentText.includes("@")) {
@@ -23,6 +24,12 @@ const AutoFillEmail = (props) => {
     }
 
     if (e.target.innerText === "@uit") {
+      try {
+        const data = await GetNameById(currentText);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
       if (/^[\d]*[\d*]$/.test(currentText)) {
         props.setData(currentText + "@gm.uit.edu.vn");
       }
@@ -48,7 +55,7 @@ const AutoFillEmail = (props) => {
       <Typography
         variant="caption"
         onClick={handleClick}
-        sx={{ textDecoration: "underline", color: '#000', fontSize: '15px' }}
+        sx={{ textDecoration: "underline", color: "#000", fontSize: "15px" }}
       >
         @uit
       </Typography>
@@ -56,7 +63,7 @@ const AutoFillEmail = (props) => {
       <Typography
         variant="caption"
         onClick={handleClick}
-        sx={{ textDecoration: "underline", color: '#000', fontSize: '15px' }}
+        sx={{ textDecoration: "underline", color: "#000", fontSize: "15px" }}
       >
         @gmail
       </Typography>
@@ -96,6 +103,7 @@ const TextEditor = (props, ref) => {
     }
     setData(val);
   };
+
   useImperativeHandle(ref, () => ({
     toggleEdit: (value) => toggleEdit(value),
     getData: () => data,
@@ -133,7 +141,11 @@ const TextEditor = (props, ref) => {
               sx={{ my: 1 }}
               endAdornment={
                 <InputAdornment position="end">
-                  <AutoFillEmail setData={setData} getData={() => data} />
+                  <AutoFillEmail
+                    setData={UpdateData}
+                    getData={() => data}
+                    setNameField={props.setNameField}
+                  />
                 </InputAdornment>
               }
             />
@@ -141,7 +153,7 @@ const TextEditor = (props, ref) => {
         )
       ) : (
         <Typography
-          variant={props.label === "Name" ? "h6" : "caption"}
+          variant={props.label === "Name" ? "body2" : "subtitle2"}
           color={props.label === "Name" ? "text.primary" : "text.secondary"}
           sx={{ maxWidth: "400px" }}
         >

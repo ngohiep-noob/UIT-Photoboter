@@ -192,7 +192,7 @@ const MessageBox = (props) => {
                 <Paper
                   elevation={0}
                   sx={{
-                    maxHeight: 150,
+                    maxHeight: 250,
                     overflow: "auto",
                     backgroundColor: "#fefefe80",
                     borderRadius: "10px",

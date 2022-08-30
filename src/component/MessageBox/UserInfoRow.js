@@ -154,9 +154,10 @@ const UserInfo = (props, ref) => {
             <TextEdit
               isGuest={props.isGuest}
               index={props.index}
-              firstVal={props.userInfo.name}
-              ref={nameRef}
-              label={"Name"}
+              firstVal={props.userInfo.email}
+              ref={emailRef}
+              setNameField={(data) => nameRef.current.setData(data)}
+              label={"Email"}
             />
           </React.Fragment>
         }
@@ -165,9 +166,9 @@ const UserInfo = (props, ref) => {
             <TextEdit
               isGuest={props.isGuest}
               index={props.index}
-              firstVal={props.userInfo.email}
-              ref={emailRef}
-              label={"Email"}
+              firstVal={props.userInfo.name}
+              ref={nameRef}
+              label={"Name"}
             />
           </React.Fragment>
         }
