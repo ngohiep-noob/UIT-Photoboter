@@ -1,6 +1,7 @@
 import React, {
   forwardRef,
   useContext,
+  useEffect,
   useImperativeHandle,
   useState,
 } from "react";
@@ -24,17 +25,19 @@ const AutoFillEmail = (props) => {
     }
 
     if (e.target.innerText === "@uit") {
-      try {
-        const data = await GetNameById(currentText);
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      }
       if (/^[\d]*[\d*]$/.test(currentText)) {
         props.setData(currentText + "@gm.uit.edu.vn");
       }
       if (/^[\D]*[\D*]$/.test(currentText)) {
         props.setData(currentText + "@uit.edu.vn");
+      }
+      try {
+        const res = await GetNameById(currentText);
+        if (res.code === 1 && res.data.hoten !== null) {
+          props.setNameField(res.data.hoten);
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
 

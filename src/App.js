@@ -11,6 +11,8 @@ import CountDownScreen from "./component/CountDown/index";
 import MessageBox from "./component/MessageBox";
 import { SetSleepTime } from "./service/RedirectPage";
 import PlayAudio from "./util/PlayAudio";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { Fab } from "@mui/material";
 
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
@@ -41,7 +43,7 @@ function App() {
     // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
     mode: 1,
     userList: [],
-    guestList: []
+    guestList: [],
   });
   const [showMsgBox, setShowMsgBox] = useState(true);
 
@@ -66,7 +68,7 @@ function App() {
     if (firstDrawRef.current) {
       firstDrawRef.current = false;
       console.log("first draw");
-      PlayAudio('welcome');
+      PlayAudio("welcome");
       spinnerRef.current.toggleSpinner();
     }
     canvasCtx.save();
@@ -188,7 +190,7 @@ function App() {
       if (messageOptions.current.mode === 2.1 && !AutoCloseMsgBoxRef.current) {
         sleepIdRef.current = SetSleepTime(300);
         // close from mode 2.1(predictions) ==> refresh session
-        PlayAudio('thankyou')
+        PlayAudio("thankyou");
         SetMsgBoxAndShow(
           {
             header: "Cảm ơn bạn nhé!",
@@ -203,7 +205,7 @@ function App() {
       }
       // close automatically
       if (messageOptions.current.mode === 2.1 && AutoCloseMsgBoxRef.current) {
-        PlayAudio('question')
+        PlayAudio("question");
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -221,7 +223,7 @@ function App() {
           !AutoCloseMsgBoxRef.current) ||
         messageOptions.current.mode === 2.2
       ) {
-        PlayAudio('welcome')
+        PlayAudio("welcome");
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -243,7 +245,7 @@ function App() {
           finalImageRef.current = "";
           isHandlingShooting.current = false;
         }, 2000);
-        PlayAudio('instruction')
+        PlayAudio("instruction");
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -326,7 +328,19 @@ function App() {
             screenshotQuality={1}
             style={{ visibility: "hidden", position: "absolute" }}
           />
-
+          <Fab
+            variant="extended"
+            color="primary"
+            sx={{
+              position: "absolute",
+              top: '10px',
+              left: '10px',
+            }}
+            href="http://map.mmlab.uit.edu.vn"
+          >
+            <ArrowBackIosNewIcon sx={{ mr: 1 }} />
+            Quay lại
+          </Fab>
           {/* canvas output */}
           <canvas ref={canvasRef}></canvas>
           <div id="bot-message">
