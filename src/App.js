@@ -13,10 +13,17 @@ import { SetSleepTime } from "./service/RedirectPage";
 import PlayAudio from "./util/PlayAudio";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Fab } from "@mui/material";
+import CustomStepper from "./component/Stepper";
 
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
-
+const steps = [
+  "1. Đưa bàn tay lên để chụp hình.",
+  "2. Tạo dáng để chụp hình.",
+  "3. Xem trước ảnh chụp.",
+  "4. Xác nhận thông tin của bạn.",
+  "5. Nhấn nút gửi mail.",
+];
 function App() {
   // DOM ref
   const webCamRef = useRef(null);
@@ -48,6 +55,7 @@ function App() {
   });
   const breakPermission = useRef(true);
   const [showMsgBox, setShowMsgBox] = useState(true);
+  const [activeStep, setActiveStep] = useState(0);
 
   const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
     if (showMsgBox === false) {
@@ -117,11 +125,12 @@ function App() {
     } else {
       fiveTipsUpRef.current = false;
     }
-
+    //process entry point
     if (fiveTipsUpRef.current && !isHandlingShooting.current) {
       isHandlingShooting.current = true;
       console.log("stop hand tracking");
       stopCheckHandRef.current = true;
+      setActiveStep(1);
       CountDownRef.current.setCountDownShow(true);
     }
 
@@ -188,6 +197,7 @@ function App() {
 
   const FinishSession = (delay = 5000) => {
     // finish session ==> ready for new session in N(s)
+    setActiveStep(0)
     setTimeout(() => {
       isHandlingShooting.current = false;
       console.log("refresh session");
@@ -205,6 +215,7 @@ function App() {
         sleepIdRef.current = SetSleepTime(300);
         console.log("1");
         PlayAudio("thankyou");
+        setActiveStep(0);
         SetMsgBoxAndShow(
           {
             header: "Cảm ơn bạn nhé!",
@@ -259,6 +270,7 @@ function App() {
           isHandlingShooting.current = false;
         }, 2000);
         PlayAudio("instruction");
+        setActiveStep(0);
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -336,12 +348,14 @@ function App() {
     setAutoCloseMsgBoxRef: (val) => {
       AutoCloseMsgBoxRef.current = val;
     },
+    setActiveStep,
   };
 
   return (
     <ProcessContextState.Provider value={context}>
       <ProcessContextDispatch.Provider value={dispatch}>
         <div id="App">
+          <CustomStepper steps={steps} activeStep={activeStep} />
           {/* video input */}
           <Webcam
             ref={webCamRef}
@@ -372,7 +386,6 @@ function App() {
             />
             <MessageBox
               show={showMsgBox}
-              FinishSession={FinishSession}
               SetMsgBoxAndShow={SetMsgBoxAndShow}
               messageOptions={messageOptions.current}
             />

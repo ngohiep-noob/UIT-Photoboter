@@ -24,7 +24,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { green } from "@mui/material/colors";
 import SendMail from "./SendMail";
 import Fab from "@mui/material/Fab";
-import { ProcessContextState } from "../../App";
+import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import HandleRegister from "./HandeleRegister";
 
 
@@ -32,6 +32,7 @@ const UserInfo = (props, ref) => {
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const context = useContext(ProcessContextState).current;
+  const dispatch = useContext(ProcessContextDispatch)
   const cacheRef = useRef({
     email: props.userInfo.email,
     name: props.userInfo.name,
@@ -52,6 +53,7 @@ const UserInfo = (props, ref) => {
 
   const HandleOpenEditClick = () => {
     setEditMode(!editMode);
+    dispatch.setActiveStep(3);
     cacheRef.current = {
       name: nameRef.current.getData(),
       email: emailRef.current.getData(),
@@ -66,13 +68,14 @@ const UserInfo = (props, ref) => {
 
   const handleSendMail = () => {
     // sendMailStatus === 0 or 2 ==> first send or resend mail
+    dispatch.setActiveStep(4);
     if (sendMailStatus === 1) {
       return new Promise((resolve, reject) => resolve(true));
     }
     if (!sending && (sendMailStatus === 0 || sendMailStatus === 2)) {
       const email = emailRef.current.getData();
       const name = nameRef.current.getData();
-
+      
       setEditMode(false); // turn off edit name and email
       if (
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) === false

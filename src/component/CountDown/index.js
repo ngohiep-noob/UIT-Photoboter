@@ -89,6 +89,7 @@ const CountDown = (props, ref) => {
           count--;
         } else {
           clearInterval(intervalId);
+          dispatch.setActiveStep(2);
           setCountDownShow(false); // clear count down
           setTimeout(() => setTimes(props.times), 1000);
         }

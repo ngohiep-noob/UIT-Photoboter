@@ -115,6 +115,7 @@ const TextEditor = (props, ref) => {
 
   const HandleChange = async(e) => {
     UpdateData(e.target.value);
+    
     if(e.target.value[e.target.value.length - 1] === '@') {
       const res = await GetNameById(e.target.value.split('@')[0]);
       if (res.code === 1 && res.data.hoten !== null) {
