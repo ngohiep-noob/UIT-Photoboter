@@ -1,10 +1,7 @@
 const axios = require("axios");
 
 const GetNameById = async (username) => {
-  const url =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000/"
-      : window.location.href;
+  const url = "http://localhost:3000/";
   const data = JSON.stringify({
     username,
   });

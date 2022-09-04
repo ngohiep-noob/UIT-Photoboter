@@ -19,10 +19,10 @@ export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
 const steps = [
   "1. Đưa bàn tay lên để chụp hình.",
-  "2. Tạo dáng để chụp hình.",
+  "2. Tạo dáng trước camera.",
   "3. Xem trước ảnh chụp.",
   "4. Xác nhận thông tin của bạn.",
-  "5. Nhấn nút gửi mail.",
+  "5. Nhấn nút mail.",
 ];
 function App() {
   // DOM ref
@@ -101,18 +101,18 @@ function App() {
         canvasElement.width,
         canvasElement.height
       );
-      if (results.multiHandLandmarks) {
-        for (const landmarks of results.multiHandLandmarks) {
-          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-            color: "#00FF00",
-            lineWidth: 5,
-          });
-          drawLandmarks(canvasCtx, landmarks, {
-            color: "#FF0000",
-            lineWidth: 2,
-          });
-        }
-      }
+      // if (results.multiHandLandmarks) {
+      //   for (const landmarks of results.multiHandLandmarks) {
+      //     drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+      //       color: "#00FF00",
+      //       lineWidth: 5,
+      //     });
+      //     drawLandmarks(canvasCtx, landmarks, {
+      //       color: "#FF0000",
+      //       lineWidth: 2,
+      //     });
+      //   }
+      // }
     }
 
     if (stopCheckHandRef.current === false) {
