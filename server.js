@@ -11,7 +11,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.static(path.join(__dirname, "build")));
 
 app.get("/photoboter", (req, res) => {
-  return res.sendFile(path.join(__dirname, "build", "index.html"));
+  return res.sendFile(path.join(__dirname, "build", 'index.html'));
 });
 
 // app.get("/", function(req, res) {
