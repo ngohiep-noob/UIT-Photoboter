@@ -53,7 +53,6 @@ const UserInfo = (props, ref) => {
 
   const HandleOpenEditClick = () => {
     setEditMode(!editMode);
-    dispatch.setActiveStep(3);
     cacheRef.current = {
       name: nameRef.current.getData(),
       email: emailRef.current.getData(),
@@ -68,7 +67,7 @@ const UserInfo = (props, ref) => {
 
   const handleSendMail = () => {
     // sendMailStatus === 0 or 2 ==> first send or resend mail
-    dispatch.setActiveStep(4);
+    dispatch.setActiveStep(2);
     if (sendMailStatus === 1) {
       return new Promise((resolve, reject) => resolve(true));
     }

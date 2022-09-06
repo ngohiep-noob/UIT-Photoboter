@@ -18,11 +18,9 @@ import CustomStepper from "./component/Stepper";
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
 const steps = [
-  "1. Đưa bàn tay lên để chụp hình.",
-  "2. Tạo dáng trước camera.",
-  "3. Xem trước ảnh chụp.",
-  "4. Xác nhận thông tin của bạn.",
-  "5. Nhấn nút mail.",
+  "1. Vẫy tay để chụp hình.",
+  "2. Kiểm tra thông tin.",
+  "3. Gửi hình.",
 ];
 function App() {
   // DOM ref
@@ -55,7 +53,7 @@ function App() {
   });
   const breakPermission = useRef(true);
   const [showMsgBox, setShowMsgBox] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(-1);
 
   const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
     if (showMsgBox === false) {
@@ -101,18 +99,19 @@ function App() {
         canvasElement.width,
         canvasElement.height
       );
-      // if (results.multiHandLandmarks) {
-      //   for (const landmarks of results.multiHandLandmarks) {
-      //     drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-      //       color: "#00FF00",
-      //       lineWidth: 5,
-      //     });
-      //     drawLandmarks(canvasCtx, landmarks, {
-      //       color: "#FF0000",
-      //       lineWidth: 2,
-      //     });
-      //   }
-      // }
+
+      if (results.multiHandLandmarks && recogizedImageRef.current === "") {
+        for (const landmarks of results.multiHandLandmarks) {
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+            color: "#00FF00",
+            lineWidth: 5,
+          });
+          drawLandmarks(canvasCtx, landmarks, {
+            color: "#FF0000",
+            lineWidth: 2,
+          });
+        }
+      }
     }
 
     if (stopCheckHandRef.current === false) {
@@ -130,7 +129,7 @@ function App() {
       isHandlingShooting.current = true;
       console.log("stop hand tracking");
       stopCheckHandRef.current = true;
-      setActiveStep(1);
+      setActiveStep(0);
       CountDownRef.current.setCountDownShow(true);
     }
 
@@ -197,12 +196,13 @@ function App() {
 
   const FinishSession = (delay = 5000) => {
     // finish session ==> ready for new session in N(s)
-    setActiveStep(0)
+    setActiveStep(-1);
     setTimeout(() => {
       isHandlingShooting.current = false;
       console.log("refresh session");
       AutoCloseMsgBoxRef.current = true;
       finalImageRef.current = "";
+      recogizedImageRef.current = "";
       setShowMsgBox(false);
     }, delay);
   };
@@ -215,7 +215,7 @@ function App() {
         sleepIdRef.current = SetSleepTime(300);
         console.log("1");
         PlayAudio("thankyou");
-        setActiveStep(0);
+        setActiveStep(-1);
         SetMsgBoxAndShow(
           {
             header: "Cảm ơn bạn nhé!",
@@ -267,10 +267,11 @@ function App() {
           console.log("refresh session");
           AutoCloseMsgBoxRef.current = false;
           finalImageRef.current = "";
+          recogizedImageRef.current = "";
           isHandlingShooting.current = false;
         }, 2000);
         PlayAudio("instruction");
-        setActiveStep(0);
+        setActiveStep(-1);
         SetMsgBoxAndShow(
           {
             ...messageOptions.current,
@@ -392,7 +393,7 @@ function App() {
           </div>
           {<Spinner ref={spinnerRef} />}
 
-          {<CountDownScreen times={5} ref={CountDownRef} />}
+          {<CountDownScreen times={3} ref={CountDownRef} />}
         </div>
       </ProcessContextDispatch.Provider>
     </ProcessContextState.Provider>

@@ -29,7 +29,7 @@ const CountDown = (props, ref) => {
   }));
 
   useEffect(() => {
-    if (times === 4) {
+    if (times === 2) {
       console.log("capture 1");
       //call api recognize
       const imgDataURL = context.webCamRef.current.getScreenshot();
@@ -89,7 +89,7 @@ const CountDown = (props, ref) => {
           count--;
         } else {
           clearInterval(intervalId);
-          dispatch.setActiveStep(2);
+          dispatch.setActiveStep(1);
           setCountDownShow(false); // clear count down
           setTimeout(() => setTimes(props.times), 1000);
         }
