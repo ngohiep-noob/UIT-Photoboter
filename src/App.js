@@ -22,6 +22,7 @@ const steps = [
   "2. Kiểm tra thông tin.",
   "3. Gửi hình.",
 ];
+
 function App() {
   // DOM ref
   const webCamRef = useRef(null);
@@ -39,6 +40,7 @@ function App() {
     width: 0,
     height: 0,
   });
+  const captureImage = useRef(new Image());
   const stopCheckHandRef = useRef(false);
   const AutoCloseMsgBoxRef = useRef(true);
   const breakProcessRef = useRef(false);
@@ -51,9 +53,13 @@ function App() {
     userList: [],
     guestList: [],
   });
+
   const breakPermission = useRef(true);
   const [showMsgBox, setShowMsgBox] = useState(true);
   const [activeStep, setActiveStep] = useState(-1);
+  const [bannerUrl, setBannerUrl] = useState("");
+  const banner = useRef(new Image());
+  const bannerList = useRef([]);
 
   const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
     if (showMsgBox === false) {
@@ -63,6 +69,14 @@ function App() {
       }, delay);
     }
   };
+
+  const handleChangeFrame = () => {
+    const index = bannerList.current.indexOf(bannerUrl.split("/")[2]);
+    const newInx = (index + 1) % bannerList.current.length;
+    console.log("image name", "/Banners/" + bannerList.current[newInx]);
+    setBannerUrl("/Banners/" + bannerList.current[newInx]);
+  };
+
   var camera = null;
 
   async function HandDetectionOnResults(results) {
@@ -84,16 +98,15 @@ function App() {
 
     let img = results.image;
     if (finalImageRef.current !== "") {
-      let finalImg = new Image();
-      finalImg.src = finalImageRef.current;
-      img = finalImg;
+      captureImage.current.src = finalImageRef.current;
+      img = captureImage.current;
     }
 
     canvasCtx.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
 
     if (finalImageRef.current === "") {
       canvasCtx.drawImage(
-        document.getElementById("img-frame"),
+        banner.current,
         0,
         0,
         canvasElement.width,
@@ -153,8 +166,26 @@ function App() {
   }
 
   useEffect(() => {
+    banner.current.src = bannerUrl;
+    localStorage.setItem("bannerUrl", bannerUrl);
+  }, [bannerUrl]);
+
+  useEffect(() => {
     const { innerWidth: w, innerHeight: h } = window;
     const minSize = Math.min(w, h);
+    console.log(process.env.REACT_APP_URL);
+    fetch(process.env.REACT_APP_URL + "banners")
+      .then((res) => res.json())
+      .then((res) => {
+        bannerList.current = res.files;
+      });
+
+    let bnUrl = localStorage.getItem("bannerUrl");
+    if (!bnUrl) {
+      bnUrl = "/Banners/default.png";
+    }
+    setBannerUrl(bnUrl);
+    localStorage.setItem("bannerUrl", bnUrl);
 
     if (minSize === w) {
       screenSize.current.width = w;
@@ -211,25 +242,33 @@ function App() {
     if (showMsgBox === false) {
       // close by click X button
       // console.log(messageOptions.current.mode, AutoCloseMsgBoxRef.current)
-      if (messageOptions.current.mode === 2.1 && !AutoCloseMsgBoxRef.current) {
+      if (
+        messageOptions.current.mode === 2.1 &&
+        AutoCloseMsgBoxRef.current === false
+      ) {
         sleepIdRef.current = SetSleepTime(300);
-        console.log("1");
+
         PlayAudio("thankyou");
         setActiveStep(-1);
-        SetMsgBoxAndShow(
-          {
-            header: "Cảm ơn bạn nhé!",
-            body: "Hãy chờ trong giây lát cho lần sử  dụng tiếp theo nhé!",
-            mode: 1,
-            userList: [],
-            guestList: [],
-          },
-          550
-        );
+        setTimeout(() => {
+          SetMsgBoxAndShow(
+            {
+              header: "Cảm ơn bạn nhé!",
+              body: "Hãy chờ trong giây lát cho lần sử  dụng tiếp theo nhé!",
+              mode: 1,
+              userList: [],
+              guestList: [],
+            },
+            550
+          );
+        }, 350);
         return;
       }
       // close automatically
-      if (messageOptions.current.mode === 2.1 && AutoCloseMsgBoxRef.current) {
+      if (
+        messageOptions.current.mode === 2.1 &&
+        AutoCloseMsgBoxRef.current === true
+      ) {
         PlayAudio("question");
         SetMsgBoxAndShow(
           {
@@ -260,6 +299,7 @@ function App() {
         );
         return;
       }
+
       if (messageOptions.current.mode === 3 && breakProcessRef.current) {
         sleepIdRef.current = SetSleepTime(300);
         breakProcessRef.current = false;
@@ -272,15 +312,17 @@ function App() {
         }, 2000);
         PlayAudio("instruction");
         setActiveStep(-1);
-        SetMsgBoxAndShow(
-          {
-            ...messageOptions.current,
-            header: "Hãy vào vị trí!",
-            body: "Giơ bàn tay lên để  chụp hình nhé!",
-            mode: 1,
-          },
-          550
-        );
+        setTimeout(() => {
+          SetMsgBoxAndShow(
+            {
+              ...messageOptions.current,
+              header: "Hãy vào vị trí!",
+              body: "Giơ bàn tay lên để  chụp hình nhé!",
+              mode: 1,
+            },
+            550
+          );
+        }, 200);
       }
     }
 
@@ -292,15 +334,6 @@ function App() {
       ) {
         FinishSession();
       }
-      // if (
-      //   // prevent auto close after cancel interception
-      //   messageOptions.current.mode === 2.1 &&
-      //   AutoCloseMsgBoxRef.current === false
-      // ) {
-      //   setTimeout(() => {
-      //     AutoCloseMsgBoxRef.current = true;
-      //   }, 10000);
-      // }
     }
   }, [showMsgBox]);
 
@@ -376,6 +409,19 @@ function App() {
           >
             <ArrowBackIosNewIcon sx={{ mr: 1 }} />
             Quay lại
+          </Fab>
+
+          <Fab
+            variant="extended"
+            color="primary"
+            sx={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+            }}
+            onClick={handleChangeFrame}
+          >
+            Đổi khung
           </Fab>
           {/* canvas output */}
           <canvas ref={canvasRef}></canvas>

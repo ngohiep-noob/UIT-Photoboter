@@ -4,19 +4,16 @@ const app = express();
 const SendMail = require("./server/sendMail");
 const cors = require("cors");
 const { GetNameById } = require("./server/getNameFromID");
+const fs = require("fs");
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
 app.use(express.static(path.join(__dirname, "build")));
 
-app.get("/photoboter", (req, res) => {
-  return res.sendFile(path.join(__dirname, "build", 'index.html'));
+app.get("/", (req, res) => {
+  return res.sendFile(path.join(__dirname, "build", "index.html"));
 });
-
-// app.get("/", function(req, res) {
-//   return res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
 
 app.post("/send-mail", async (req, res) => {
   try {
@@ -47,6 +44,11 @@ app.post("/get-name", async (req, res) => {
       message: error,
     });
   }
+});
+
+app.get("/banners", async (req, res) => {
+  const files = fs.readdirSync("./public/Banners");
+  return res.json({ files });
 });
 
 app.listen(3000, () => {

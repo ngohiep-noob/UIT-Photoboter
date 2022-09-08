@@ -102,12 +102,6 @@ const MessageBox = (props) => {
   }, [sending]);
 
   useEffect(() => {
-    // console.log(
-    //   "render msgBox mode",
-    //   props.messageOptions.mode,
-    //   "show",
-    //   props.show
-    // );
     if (
       props.messageOptions.mode === 2.1 &&
       props.show &&
