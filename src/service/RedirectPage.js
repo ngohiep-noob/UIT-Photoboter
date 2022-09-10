@@ -1,14 +1,22 @@
 const SetSleepTime = (sec = 60, url = "http://map.mmlab.uit.edu.vn/") => {
-  console.log('sleep');
+  console.log("sleep");
   const id = window.setTimeout(() => {
     window.location.replace(url);
-  }, sec*1000);
+  }, sec * 1000);
   return id;
 };
 
 const ClearSleepTime = (id) => {
-  console.log('wake up');
+  console.log("wake up");
   window.clearTimeout(id);
 };
 
-export {SetSleepTime, ClearSleepTime}
+const ClearAllTimeOut = () => {
+  var id = window.setTimeout(function() {}, 0);
+
+  while (id--) {
+    window.clearTimeout(id); // will do nothing if no timeout with id is present
+  }
+};
+
+export { SetSleepTime, ClearSleepTime, ClearAllTimeOut };

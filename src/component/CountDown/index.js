@@ -7,9 +7,10 @@ import React, {
 } from "react";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import HandleRecognize from "./HandleRecognize";
-import { ClearSleepTime } from "../../service/RedirectPage";
+import { ClearAllTimeOut, ClearSleepTime } from "../../service/RedirectPage";
 import { Backdrop } from "@mui/material";
 import PlayAudio from "../../util/PlayAudio";
+import { CanInterceptAfter } from "../../constant/constants";
 
 const CountDown = (props, ref) => {
   const [times, setTimes] = useState(props.times);
@@ -74,7 +75,7 @@ const CountDown = (props, ref) => {
           console.log('run hand tracking')
           dispatch.setStopCheckHand(false)
           dispatch.setBreakPermission(true);
-        }, 2000);
+        }, CanInterceptAfter * 1000);
       }, 1100);
     }
   }, [times]);
@@ -82,6 +83,7 @@ const CountDown = (props, ref) => {
   useEffect(() => {
     if (show) {
       ClearSleepTime(context.sleepIdRef.current); // wake up
+      ClearAllTimeOut();
       let count = props.times - 1;
       var intervalId = setInterval(() => {
         if (count > 0) {

@@ -14,6 +14,9 @@ app.use(express.static(path.join(__dirname, "build")));
 app.get("/", (req, res) => {
   return res.sendFile(path.join(__dirname, "build", "index.html"));
 });
+app.get("/photoboter", (req, res) => {
+  return res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.post("/send-mail", async (req, res) => {
   try {

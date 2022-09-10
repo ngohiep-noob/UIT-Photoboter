@@ -8,6 +8,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import Alert from "@mui/material/Alert";
 import PlayAudio from "../../util/PlayAudio";
+import { CanInterceptAfter } from "../../constant/constants";
 
 const MessageBox = (props) => {
   const dispatch = useContext(ProcessContextDispatch);
@@ -56,7 +57,7 @@ const MessageBox = (props) => {
     }, 550);
     setTimeout(() => {
       dispatch.setBreakPermission(true);
-    }, 3000);
+    }, CanInterceptAfter * 1000);
   };
 
   useEffect(() => {
