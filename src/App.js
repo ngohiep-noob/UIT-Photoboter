@@ -57,7 +57,13 @@ function App() {
   const breakPermission = useRef(true);
   const [showMsgBox, setShowMsgBox] = useState(true);
   const [activeStep, setActiveStep] = useState(-1);
-  const [bannerUrl, setBannerUrl] = useState("/Banners/default.png");
+  const [bannerUrl, setBannerUrl] = useState(() => {
+    const bannerStored = localStorage.getItem("bannerUrl");
+    if (bannerStored) {
+      return bannerStored;
+    }
+    return "/Banners/default.png";
+  });
   const banner = useRef(new Image());
   const bannerList = useRef([]);
 
@@ -71,7 +77,7 @@ function App() {
   };
 
   const handleChangeFrame = () => {
-    if (!isHandlingShooting.current) {
+    if (!isHandlingShooting.current && bannerList.current.length > 0) {
       const index = bannerList.current.indexOf(bannerUrl.split("/")[2]);
       const newInx = (index + 1) % bannerList.current.length;
       console.log("image name", "/Banners/" + bannerList.current[newInx]);
@@ -176,18 +182,16 @@ function App() {
     const { innerWidth: w, innerHeight: h } = window;
     const minSize = Math.min(w, h);
     console.log(process.env.REACT_APP_URL);
-    fetch(process.env.REACT_APP_URL + "banners")
-      .then((res) => res.json())
-      .then((res) => {
-        bannerList.current = res.files;
-      });
 
-    let bnUrl = localStorage.getItem("bannerUrl");
-    if (!bnUrl) {
-      bnUrl = "/Banners/default.png";
+    try {
+      fetch(process.env.REACT_APP_URL + "banners")
+        .then((res) => res.json())
+        .then((res) => {
+          bannerList.current = res.files;
+        });
+    } catch (error) {
+      console.log(error);
     }
-    setBannerUrl(bnUrl);
-    localStorage.setItem("bannerUrl", bnUrl);
 
     if (minSize === w) {
       screenSize.current.width = w;
