@@ -57,7 +57,7 @@ function App() {
   const breakPermission = useRef(true);
   const [showMsgBox, setShowMsgBox] = useState(true);
   const [activeStep, setActiveStep] = useState(-1);
-  const [bannerUrl, setBannerUrl] = useState("");
+  const [bannerUrl, setBannerUrl] = useState("/Banners/default.png");
   const banner = useRef(new Image());
   const bannerList = useRef([]);
 
@@ -71,10 +71,12 @@ function App() {
   };
 
   const handleChangeFrame = () => {
-    const index = bannerList.current.indexOf(bannerUrl.split("/")[2]);
-    const newInx = (index + 1) % bannerList.current.length;
-    console.log("image name", "/Banners/" + bannerList.current[newInx]);
-    setBannerUrl("/Banners/" + bannerList.current[newInx]);
+    if (!isHandlingShooting.current) {
+      const index = bannerList.current.indexOf(bannerUrl.split("/")[2]);
+      const newInx = (index + 1) % bannerList.current.length;
+      console.log("image name", "/Banners/" + bannerList.current[newInx]);
+      setBannerUrl("/Banners/" + bannerList.current[newInx]);
+    }
   };
 
   var camera = null;
