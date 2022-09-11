@@ -1,6 +1,6 @@
 const SendMail = async (body) => {
-  const url = process.env.REACT_APP_URL;
-  const resp = await fetch(`${url}send-mail`, {
+  const url = process.env.PUBLIC_URL;
+  const resp = await fetch(url + '/send-mail', {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

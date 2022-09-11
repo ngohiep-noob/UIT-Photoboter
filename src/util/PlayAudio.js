@@ -6,6 +6,7 @@ import sorry from "../audio/sorry.mp3";
 import question from "../audio/question.mp3";
 import ctn from "../audio/continue.mp3";
 import confirm from "../audio/confirm.mp3";
+import changeframe from '../audio/changeframe.mp3'
 
 let audio = new Audio();
 const PlayAudio = (type) => {
@@ -65,6 +66,13 @@ const PlayAudio = (type) => {
         audio.play();
       }
       break;
+
+      case 'changeframe':
+        if (audio.paused) {
+          audio.src = changeframe;
+          audio.play();
+        }
+        break;
 
     default:
       break;

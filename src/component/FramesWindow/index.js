@@ -20,6 +20,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { ProcessContextDispatch } from "../../App";
 import { FRAMES_PER_ROW } from "../../constant/constants";
+import PlayAudio from "../../util/PlayAudio";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -82,6 +83,7 @@ const FramesWindow = ({ SetBannerUrl }, ref) => {
   };
 
   const HandleOpen = () => {
+    PlayAudio("changeframe");
     setOpen(true);
   };
 
