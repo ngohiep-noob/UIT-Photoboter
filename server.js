@@ -50,8 +50,25 @@ app.post("/get-name", async (req, res) => {
 });
 
 app.get("/banners", async (req, res) => {
-  const files = fs.readdirSync("./public/Banners");
-  return res.json({ files });
+  try {
+    const files = fs.readdirSync(path.join(__dirname, "public", "Banners"));
+    return res.json({ files });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+});
+
+app.get("/banners/:filename", async (req, res) => {
+  try {
+    const filename = req.params["filename"];
+    console.log(filename);
+    return res.sendFile(path.join(__dirname, "public", "Banners", filename));
+  } catch (error) {
+    console.log(error);
+    return res.json({ error });
+  }
 });
 
 app.listen(3000, () => {

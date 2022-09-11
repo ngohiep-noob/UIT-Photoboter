@@ -14,6 +14,7 @@ import PlayAudio from "./util/PlayAudio";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Fab } from "@mui/material";
 import CustomStepper from "./component/Stepper";
+import FramesWindow from "./component/FramesWindow";
 
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
@@ -29,6 +30,7 @@ function App() {
   const canvasRef = useRef(null);
   const spinnerRef = useRef(null);
   const CountDownRef = useRef(null);
+  const ChangeFrame = useRef(null);
   // global variables
   const fiveTipsUpRef = useRef(false);
   const isHandlingShooting = useRef(false);
@@ -57,15 +59,9 @@ function App() {
   const breakPermission = useRef(true);
   const [showMsgBox, setShowMsgBox] = useState(true);
   const [activeStep, setActiveStep] = useState(-1);
-  const [bannerUrl, setBannerUrl] = useState(() => {
-    const bannerStored = localStorage.getItem("bannerUrl");
-    if (bannerStored) {
-      return bannerStored;
-    }
-    return "/Banners/default.png";
-  });
+  const [bannerUrl, setBannerUrl] = useState("default.png");
   const banner = useRef(new Image());
-  const bannerList = useRef([]);
+  const [showChangeFrameBtn, setShowChangeFrameBtn] = useState(true);
 
   const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
     if (showMsgBox === false) {
@@ -77,12 +73,9 @@ function App() {
   };
 
   const handleChangeFrame = () => {
-    if (!isHandlingShooting.current && bannerList.current.length > 0) {
-      const index = bannerList.current.indexOf(bannerUrl.split("/")[2]);
-      const newInx = (index + 1) % bannerList.current.length;
-      console.log("image name", "/Banners/" + bannerList.current[newInx]);
-      setBannerUrl("/Banners/" + bannerList.current[newInx]);
-    }
+    stopCheckHandRef.current = true;
+    console.log("stop hand tracking!");
+    ChangeFrame.current.Open();
   };
 
   var camera = null;
@@ -151,6 +144,7 @@ function App() {
       console.log("stop hand tracking");
       stopCheckHandRef.current = true;
       setActiveStep(0);
+      setShowChangeFrameBtn(false);
       CountDownRef.current.setCountDownShow(true);
     }
 
@@ -165,33 +159,19 @@ function App() {
       AutoCloseMsgBoxRef.current = true;
       setShowMsgBox(false);
       breakPermission.current = false;
-      // setTimeout(() => {
-      //   console.log('close for interception')
-      // }, 1000)
     }
 
     canvasCtx.restore();
   }
 
   useEffect(() => {
-    banner.current.src = bannerUrl;
-    localStorage.setItem("bannerUrl", bannerUrl);
+    banner.current.crossOrigin = "anonymous";
+    banner.current.src = process.env.REACT_APP_IMG_URL + bannerUrl;
   }, [bannerUrl]);
 
   useEffect(() => {
     const { innerWidth: w, innerHeight: h } = window;
     const minSize = Math.min(w, h);
-    console.log(process.env.REACT_APP_URL);
-
-    try {
-      fetch(process.env.REACT_APP_URL + "banners")
-        .then((res) => res.json())
-        .then((res) => {
-          bannerList.current = res.files;
-        });
-    } catch (error) {
-      console.log(error);
-    }
 
     if (minSize === w) {
       screenSize.current.width = w;
@@ -235,6 +215,7 @@ function App() {
     // finish session ==> ready for new session in N(s)
     setActiveStep(-1);
     setTimeout(() => {
+      setShowChangeFrameBtn(true);
       isHandlingShooting.current = false;
       console.log("refresh session");
       AutoCloseMsgBoxRef.current = true;
@@ -310,6 +291,7 @@ function App() {
         sleepIdRef.current = SetSleepTime(300);
         breakProcessRef.current = false;
         setTimeout(() => {
+          setShowChangeFrameBtn(true);
           console.log("refresh session");
           AutoCloseMsgBoxRef.current = false;
           finalImageRef.current = "";
@@ -416,24 +398,25 @@ function App() {
             <ArrowBackIosNewIcon sx={{ mr: 1 }} />
             Quay lại
           </Fab>
-
-          <Fab
-            variant="extended"
-            color="primary"
-            sx={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-            }}
-            onClick={handleChangeFrame}
-          >
-            Đổi khung
-          </Fab>
+          {showChangeFrameBtn && (
+            <Fab
+              variant="extended"
+              color="primary"
+              sx={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+              }}
+              onClick={handleChangeFrame}
+            >
+              Đổi khung
+            </Fab>
+          )}
           {/* canvas output */}
           <canvas ref={canvasRef}></canvas>
           <div id="bot-message">
             <img
-              src={require("./dev/image/robot.png")}
+              src={process.env.PUBLIC_URL + "/image/robot.png"}
               id="robot"
               alt="robot"
             />
@@ -446,6 +429,8 @@ function App() {
           {<Spinner ref={spinnerRef} />}
 
           {<CountDownScreen times={3} ref={CountDownRef} />}
+
+          {<FramesWindow ref={ChangeFrame} SetBannerUrl={setBannerUrl} />}
         </div>
       </ProcessContextDispatch.Provider>
     </ProcessContextState.Provider>
