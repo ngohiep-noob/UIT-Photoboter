@@ -383,6 +383,7 @@ function App() {
             ref={webCamRef}
             screenshotFormat="image/jpeg"
             screenshotQuality={1}
+            mirrored={true}
             style={{ visibility: "hidden", position: "absolute" }}
           />
           <Fab
