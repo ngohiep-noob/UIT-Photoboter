@@ -44,12 +44,13 @@ function App() {
   });
   const captureImage = useRef(new Image());
   const stopCheckHandRef = useRef(false);
+  const drawHandRef = useRef(true);
   const AutoCloseMsgBoxRef = useRef(true);
   const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
     body:
-      "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
+      "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
     // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
     mode: 1,
     userList: [],
@@ -114,7 +115,7 @@ function App() {
         canvasElement.height
       );
 
-      if (results.multiHandLandmarks && recogizedImageRef.current === "") {
+      if (results.multiHandLandmarks && drawHandRef.current) {
         for (const landmarks of results.multiHandLandmarks) {
           drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
             color: "#00FF00",
@@ -148,18 +149,18 @@ function App() {
       CountDownRef.current.setCountDownShow(true);
     }
 
-    if (
-      showMsgBox === true &&
-      fiveTipsUpRef.current &&
-      isHandlingShooting.current &&
-      messageOptions.current.mode === 2.1 &&
-      breakPermission.current === true
-    ) {
-      console.log("interception!");
-      AutoCloseMsgBoxRef.current = true;
-      setShowMsgBox(false);
-      breakPermission.current = false;
-    }
+    // if (
+    //   showMsgBox === true &&
+    //   fiveTipsUpRef.current &&
+    //   isHandlingShooting.current &&
+    //   messageOptions.current.mode === 2.1 &&
+    //   breakPermission.current === true
+    // ) {
+    //   console.log("interception!");
+    //   AutoCloseMsgBoxRef.current = true;
+    //   setShowMsgBox(false);
+    //   breakPermission.current = false;
+    // }
 
     canvasCtx.restore();
   }
@@ -172,7 +173,7 @@ function App() {
   useEffect(() => {
     const { innerWidth: w, innerHeight: h } = window;
     const minSize = Math.min(w, h);
-
+    console.log("Environment", process.env.NODE_ENV);
     if (minSize === w) {
       screenSize.current.width = w;
       screenSize.current.height = (3 / 4) * w;
@@ -189,8 +190,8 @@ function App() {
     hands.setOptions({
       maxNumHands: 1,
       modelComplexity: 1,
-      minDetectionConfidence: 0.7,
-      minTrackingConfidence: 0.7,
+      minDetectionConfidence: 0.85,
+      minTrackingConfidence: 0.85,
     });
 
     hands.onResults(HandDetectionOnResults);
@@ -221,6 +222,7 @@ function App() {
       AutoCloseMsgBoxRef.current = true;
       finalImageRef.current = "";
       recogizedImageRef.current = "";
+      drawHandRef.current = true;
       setShowMsgBox(false);
     }, delay);
   };
@@ -279,7 +281,7 @@ function App() {
             ...messageOptions.current,
             header: "Xin chào!",
             body:
-              "Mình là UIT-Photoboter! Hãy lại gần camera và giơ bàn tay lên để  chụp hình nhé!",
+              "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
             mode: 1,
           },
           550
@@ -293,6 +295,7 @@ function App() {
         setTimeout(() => {
           setShowChangeFrameBtn(true);
           console.log("refresh session");
+          drawHandRef.current = true;
           AutoCloseMsgBoxRef.current = false;
           finalImageRef.current = "";
           recogizedImageRef.current = "";
@@ -371,6 +374,9 @@ function App() {
       AutoCloseMsgBoxRef.current = val;
     },
     setActiveStep,
+    setDrawHandRef: (val) => {
+      drawHandRef.current = val;
+    },
   };
 
   return (
@@ -384,7 +390,10 @@ function App() {
             screenshotFormat="image/jpeg"
             screenshotQuality={1}
             mirrored={true}
-            style={{ visibility: "hidden", position: "absolute" }}
+            style={{
+              visibility: "hidden",
+              position: "absolute",
+            }}
           />
           <Fab
             variant="extended"

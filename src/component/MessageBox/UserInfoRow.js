@@ -25,7 +25,7 @@ import { green } from "@mui/material/colors";
 import SendMail from "./SendMail";
 import Fab from "@mui/material/Fab";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
-import HandleRegister from "./HandeleRegister";
+import HandleRegister from "./HandleRegister";
 
 
 const UserInfo = (props, ref) => {

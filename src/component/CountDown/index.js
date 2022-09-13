@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import HandleRecognize from "./HandleRecognize";
-import { ClearAllTimeOut, ClearSleepTime } from "../../service/RedirectPage";
+import { ClearSleepTime } from "../../service/RedirectPage";
 import { Backdrop } from "@mui/material";
 import PlayAudio from "../../util/PlayAudio";
 import { CanInterceptAfter } from "../../constant/constants";
@@ -20,9 +20,7 @@ const CountDown = (props, ref) => {
 
   const CanvasToFile = () => {
     const canvas = document.querySelector("canvas");
-    // const imgFile = dataURLtoFile(canvas.toDataURL("image/jpeg"), "image.jpeg");
     return canvas.toDataURL("image/jpeg");
-    // return imgFile;
   };
 
   useImperativeHandle(ref, () => ({
@@ -30,18 +28,12 @@ const CountDown = (props, ref) => {
   }));
 
   useEffect(() => {
-    if (times === 2) {
-      console.log("capture 1");
-      //call api recognize
-      const imgDataURL = context.webCamRef.current.getScreenshot();
-      dispatch.setRecogizedImageRef(imgDataURL);
-      HandleRecognize(imgDataURL, dispatch, context);
-    }
-
     if (times === 1) {
       console.log("capture 2");
+      dispatch.setDrawHandRef(false);
       //send mail
       setTimeout(() => {
+        console.log("check userlist", context.messageOptions.current);
         dispatch.setShowMsgBox(false); // close notifications(from mode 1) ***
         dispatch.setFinalImageRef(CanvasToFile());
         let audio =
@@ -71,9 +63,10 @@ const CountDown = (props, ref) => {
           });
           dispatch.setShowMsgBox(true); // re-show predictions(switch to mode 2)
         }, 550);
+
         setTimeout(() => {
-          console.log('run hand tracking')
-          dispatch.setStopCheckHand(false)
+          console.log("run hand tracking");
+          dispatch.setStopCheckHand(false);
           dispatch.setBreakPermission(true);
         }, CanInterceptAfter * 1000);
       }, 1100);
@@ -81,9 +74,15 @@ const CountDown = (props, ref) => {
   }, [times]);
 
   useEffect(() => {
-    if (show) {
+    if (show === true) {
       ClearSleepTime(context.sleepIdRef.current); // wake up
-      ClearAllTimeOut();
+
+      //call api recognize
+      console.log("capture 1");
+      const imgDataURL = context.webCamRef.current.getScreenshot();
+      dispatch.setRecogizedImageRef(imgDataURL);
+      (async () => await HandleRecognize(imgDataURL, dispatch, context))();
+
       let count = props.times - 1;
       var intervalId = setInterval(() => {
         if (count > 0) {
@@ -92,7 +91,7 @@ const CountDown = (props, ref) => {
         } else {
           clearInterval(intervalId);
           dispatch.setActiveStep(1);
-          setCountDownShow(false); // clear count down
+          setCountDownShow(false); // close count down
           setTimeout(() => setTimes(props.times), 1000);
         }
       }, 1100);

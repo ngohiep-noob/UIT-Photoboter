@@ -1,7 +1,10 @@
 const axios = require("axios");
 
 const GetNameById = async (username) => {
-  const url = process.env.PUBLIC_URL;
+  const url =
+    process.env.NODE_ENV == "development"
+      ? "http://localhost:3000"
+      : process.env.PUBLIC_URL;
   const data = JSON.stringify({
     username,
   });

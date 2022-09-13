@@ -93,6 +93,9 @@ const MessageBox = (props) => {
         ) {
           setSentAllMail(true);
           setSendingStatus(1);
+          setTimeout(() => {
+            handleCloseClick();
+          }, 1500);
         } else {
           setSentAllMail(false);
           setSendingStatus(2);
@@ -306,7 +309,19 @@ const MessageBox = (props) => {
           )}
           {props.messageOptions.mode === 1 && (
             // mode 1: show notifications
-            <p>{props.messageOptions.body}</p>
+            <div className="d-flex flex-column align-items-center">
+              <p>{props.messageOptions.body}</p>
+              {props.messageOptions.body ==
+                "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!" && (
+                <img
+                  src="https://i.pinimg.com/originals/4c/23/63/4c236364db3543337354bc3acc1fe792.gif"
+                  alt="hand waving gif"
+                  style={{
+                    width: "200px",
+                  }}
+                />
+              )}
+            </div>
           )}
           {props.messageOptions.mode === 3 && (
             <div>
