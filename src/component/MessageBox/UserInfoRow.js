@@ -26,7 +26,7 @@ import SendMail from "./SendMail";
 import Fab from "@mui/material/Fab";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import HandleRegister from "./HandleRegister";
-
+import PlayAudio from "../../util/PlayAudio";
 
 const UserInfo = (props, ref) => {
   const nameRef = useRef(null);
@@ -52,6 +52,10 @@ const UserInfo = (props, ref) => {
   };
 
   const HandleOpenEditClick = () => {
+    if(!editMode)
+    {
+        PlayAudio('inputEmail'); //instruction
+    }
     setEditMode(!editMode);
     cacheRef.current = {
       name: nameRef.current.getData(),
