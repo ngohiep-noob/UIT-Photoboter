@@ -314,7 +314,7 @@ const MessageBox = (props) => {
               {props.messageOptions.body ==
                 "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!" && (
                 <img
-                  src="https://i.pinimg.com/originals/4c/23/63/4c236364db3543337354bc3acc1fe792.gif"
+                  src="https://c.tenor.com/QJP_QPYxoPsAAAAC/wave-panda.gif"
                   alt="hand waving gif"
                   style={{
                     width: "200px",

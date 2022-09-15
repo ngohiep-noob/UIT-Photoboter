@@ -61,16 +61,16 @@ function ColorlibStepIcon(props) {
   const { active, completed, className } = props;
 
   const icons = {
-    1: <SignLanguageIcon sx={{scale: '1.4'}}/>,
-    2: <ImageSearchIcon sx={{scale: '1.4'}}/>,
-    3: <MarkEmailReadIcon sx={{scale: '1.4'}}/>,
+    1: <SignLanguageIcon sx={{ scale: "1.4" }} />,
+    2: <ImageSearchIcon sx={{ scale: "1.4" }} />,
+    3: <MarkEmailReadIcon sx={{ scale: "1.4" }} />,
   };
 
   return (
     <ColorlibStepIconRoot
       ownerState={{ completed, active }}
       className={className}
-      sx={{scale: '1.5'}}
+      sx={{ scale: "1.5" }}
     >
       {icons[String(props.icon)]}
     </ColorlibStepIconRoot>
@@ -88,7 +88,11 @@ const CustomStepper = ({ steps, activeStep }) => {
       {steps.map((label) => (
         <Step key={label}>
           <StepLabel StepIconComponent={ColorlibStepIcon}>
-          <h3><b>{label}</b></h3>
+            {label === "1. Vẫy tay để chụp hình." ? (
+              <h3>1. {<b>Vẫy tay</b>} để chụp hình</h3>
+            ) : (
+              <h3>{label}</h3>
+            )}
           </StepLabel>
         </Step>
       ))}
