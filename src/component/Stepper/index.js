@@ -89,7 +89,10 @@ const CustomStepper = ({ steps, activeStep }) => {
         <Step key={label}>
           <StepLabel StepIconComponent={ColorlibStepIcon}>
             {label === "1. Vẫy tay để chụp hình." ? (
-              <h3>1. {<b >Vẫy tay</b>} để chụp hình</h3>
+              <h3>
+                1. Hãy lại {<b>VÙNG CÓ ÁNH ĐÈN</b>} và {<b>VẪY TAY</b>} để chụp
+                hình nhé!
+              </h3>
             ) : (
               <h3>{label}</h3>
             )}
