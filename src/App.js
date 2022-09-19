@@ -438,7 +438,12 @@ function App() {
           </div>
           {<Spinner ref={spinnerRef} />}
 
-          {<CountDownScreen times={3} ref={CountDownRef} />}
+          {
+            <CountDownScreen
+              times={process.env.REACT_APP_COUNTDOWN}
+              ref={CountDownRef}
+            />
+          }
 
           {<FramesWindow ref={ChangeFrame} SetBannerUrl={setBannerUrl} />}
         </div>
