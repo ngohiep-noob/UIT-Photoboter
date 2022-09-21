@@ -3,6 +3,7 @@ const isFiveTipsUp = (multiHandLandmarks, width, height) => {
   const tipIds = [4, 8, 12, 16, 20];
   let lmList = [];
   let fingersUp = 0;
+  let flag = false;
   let w = width;
   let h = height;
 
@@ -16,6 +17,8 @@ const isFiveTipsUp = (multiHandLandmarks, width, height) => {
       index += 1;
     }
   }
+  
+
 
   //thumb
   if (lmList[tipIds[0]]) {
@@ -35,7 +38,17 @@ const isFiveTipsUp = (multiHandLandmarks, width, height) => {
     }
   }
 
-  return (fingersUp >= 4);
+  if(lmList[0])
+  {
+    if(lmList[0].at(2) < 600){
+      flag = true;
+    }
+  }
+
+
+  console.log(fingersUp >= 4 && flag)
+
+  return (fingersUp >= 4 && flag);
 }
 
 export default isFiveTipsUp;
