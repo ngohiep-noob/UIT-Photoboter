@@ -8,6 +8,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { ProcessContextDispatch, ProcessContextState } from "../../App";
 import Alert from "@mui/material/Alert";
 import PlayAudio from "../../util/PlayAudio";
+import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import { CanInterceptAfter } from "../../constant/constants";
 
 const MessageBox = (props) => {
@@ -35,9 +36,10 @@ const MessageBox = (props) => {
     dispatch.setShowMsgBox(false);
   };
 
-  const handleClickYesMode3 = () => {
-    dispatch.setShowMsgBox(false); // mode 3 -> mode 1
+  const screenShotAgain = () => {
+    dispatch.setShowMsgBox(false); // mode 2.1 -> mode 1
     dispatch.setBreakProcessRef(true);
+    dispatch.setAutoCloseMsgBoxRef(true);
     setTimeout(() => {
       dispatch.setBreakPermission(true);
     }, 3000);
@@ -231,8 +233,8 @@ const MessageBox = (props) => {
                     <Alert
                       variant="filled"
                       severity="info"
-                      className="col-8"
-                      style={{ width: "45%", marginRight: "200px" }}
+                      className="col-4"
+                      style={{ width: "45%", marginRight: "60px" }}
                     >
                       Hãy xem lại thông tin nhé!
                     </Alert>
@@ -240,8 +242,8 @@ const MessageBox = (props) => {
                     <Alert
                       variant="filled"
                       severity="success"
-                      className="col-8"
-                      style={{ width: "45%", marginRight: "175px" }}
+                      className="col-4"
+                      style={{ width: "45%", marginRight: "60px" }}
                     >
                       Nhớ check mail của mình nha!
                     </Alert>
@@ -249,8 +251,8 @@ const MessageBox = (props) => {
                     <Alert
                       variant="filled"
                       severity="error"
-                      className="col-8"
-                      style={{ width: "50%", marginRight: "170px" }}
+                      className="col-4"
+                      style={{ width: "50%", marginRight: "60px" }}
                     >
                       Mình gửi mail cho bạn không được rồi!
                     </Alert>
@@ -258,8 +260,8 @@ const MessageBox = (props) => {
                     <Alert
                       variant="filled"
                       severity="warning"
-                      className="col-8"
-                      style={{ width: "50%", marginRight: "160px" }}
+                      className="col-4"
+                      style={{ width: "50%", marginRight: "60px" }}
                     >
                       Gmail này chưa hợp lệ!
                     </Alert>
@@ -267,8 +269,8 @@ const MessageBox = (props) => {
                     <Alert
                       variant="filled"
                       severity="warning"
-                      className="col-8"
-                      style={{ width: "45%", marginRight: "200px" }}
+                      className="col-4"
+                      style={{ width: "45%", marginRight: "60px" }}
                     >
                       Bạn chưa điền tên!
                     </Alert>
@@ -276,8 +278,8 @@ const MessageBox = (props) => {
                     <Alert
                       variant="filled"
                       severity="info"
-                      className="col-8"
-                      style={{ width: "50%", marginRight: "85px" }}
+                      className="col-4"
+                      style={{ width: "50%", marginRight: "60px" }}
                     >
                       Mời bạn đăng kí người mới
                     </Alert>
@@ -287,16 +289,30 @@ const MessageBox = (props) => {
                     variant="extended"
                     size="medium"
                     color="primary"
-                    className="col-4"
+                    className="col-2"
                     onClick={ToggleSendMail}
                     disabled={
                       sentAllMail ||
                       sending ||
                       props.messageOptions.userList.length === 0
                     }
+                    sx={{
+                      marginRight: "15px",
+                    }}
                   >
-                    send all
+                    Gửi hết
                     <SendIcon sx={{ ml: 1 }} />
+                  </Fab>
+
+                  <Fab
+                    variant="extended"
+                    size="medium"
+                    color="error"
+                    className="col-2"
+                    onClick={screenShotAgain}
+                  >
+                    Chụp lại
+                    <CameraEnhanceIcon sx={{ ml: 1 }} />
                   </Fab>
                 </div>
               }
@@ -311,7 +327,7 @@ const MessageBox = (props) => {
             // mode 1: show notifications
             <div className="d-flex flex-column align-items-center">
               <p>{props.messageOptions.body}</p>
-              {props.messageOptions.body ==
+              {props.messageOptions.body ===
                 "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!" && (
                 <img
                   src="https://c.tenor.com/QJP_QPYxoPsAAAAC/wave-panda.gif"
@@ -331,7 +347,7 @@ const MessageBox = (props) => {
                   variant="extended"
                   size="medium"
                   color="success"
-                  onClick={handleClickYesMode3}
+                  onClick={screenShotAgain}
                 >
                   đúng vậy
                   <CheckCircleIcon sx={{ ml: 1 }} />

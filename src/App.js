@@ -15,6 +15,8 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Fab } from "@mui/material";
 import CustomStepper from "./component/Stepper";
 import FramesWindow from "./component/FramesWindow";
+import ImageIcon from "@mui/icons-material/Image";
+import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
@@ -63,6 +65,7 @@ function App() {
   const [bannerUrl, setBannerUrl] = useState("default.png");
   const banner = useRef(new Image());
   const [showChangeFrameBtn, setShowChangeFrameBtn] = useState(true);
+  const [enableBtnShotAgain, setEnableBtnShotAgain] = useState(false);
 
   const SetMsgBoxAndShow = (msgOptions, delay = 400) => {
     if (showMsgBox === false) {
@@ -161,7 +164,11 @@ function App() {
     //   setShowMsgBox(false);
     //   breakPermission.current = false;
     // }
-
+    if (messageOptions.current.mode === 2.1) {
+      setEnableBtnShotAgain(true);
+    } else {
+      setEnableBtnShotAgain(false);
+    }
     canvasCtx.restore();
   }
 
@@ -227,6 +234,16 @@ function App() {
     }, delay);
   };
 
+  const handleShotAgain = () => {
+    setShowMsgBox(false);
+    breakProcessRef.current = true;
+    AutoCloseMsgBoxRef.current = true;
+    setEnableBtnShotAgain(false);
+    setTimeout(() => {
+      breakPermission.current = true;
+    }, 3000);
+  };
+
   useEffect(() => {
     if (showMsgBox === false) {
       // close by click X button
@@ -243,7 +260,7 @@ function App() {
           SetMsgBoxAndShow(
             {
               header: "Cảm ơn bạn nhé!",
-              body: "Hãy chờ trong giây lát cho lần sử  dụng tiếp theo nhé!",
+              body: "Hãy chờ trong giây lát cho lần sử dụng tiếp theo nhé!",
               mode: 1,
               userList: [],
               guestList: [],
@@ -253,22 +270,24 @@ function App() {
         }, 350);
         return;
       }
+
       // close automatically
-      if (
-        messageOptions.current.mode === 2.1 &&
-        AutoCloseMsgBoxRef.current === true
-      ) {
-        PlayAudio("question");
-        SetMsgBoxAndShow(
-          {
-            ...messageOptions.current,
-            mode: 3,
-            header: "Xin chào",
-            body: "Có vẻ bạn muốn chụp hình lại phải hong?",
-          },
-          550
-        );
-      }
+      // if (
+      //   messageOptions.current.mode === 2.1 &&
+      //   AutoCloseMsgBoxRef.current === true
+      // ) {
+      //   PlayAudio("question");
+      //   SetMsgBoxAndShow(
+      //     {
+      //       ...messageOptions.current,
+      //       mode: 3,
+      //       header: "Xin chào",
+      //       body: "Có vẻ bạn muốn chụp hình lại phải hong?",
+      //     },
+      //     550
+      //   );
+      // }
+
       // show welcome statement
       if (
         (messageOptions.current.mode === 1 &&
@@ -289,7 +308,12 @@ function App() {
         return;
       }
 
-      if (messageOptions.current.mode === 3 && breakProcessRef.current) {
+      // click "Chụp lại" button
+      if (
+        messageOptions.current.mode === 2.1 &&
+        breakProcessRef.current === true &&
+        AutoCloseMsgBoxRef.current === true
+      ) {
         sleepIdRef.current = SetSleepTime(300);
         breakProcessRef.current = false;
         setTimeout(() => {
@@ -400,30 +424,50 @@ function App() {
             color="primary"
             sx={{
               position: "absolute",
-              top: "10px",
-              left: "10px",
+              top: "10.5vh",
+              left: "50px",
             }}
             href="http://map.mmlab.uit.edu.vn"
           >
             <ArrowBackIosNewIcon sx={{ mr: 1 }} />
-            Quay lại
+            Trở lại
           </Fab>
-          {showChangeFrameBtn && (
+
+          {
             <Fab
               variant="extended"
-              color="primary"
+              className="start-50 translate-middle-x"
               sx={{
                 position: "absolute",
-                top: "10px",
-                right: "10px",
+                top: "10.5vh",
               }}
+              disabled={!showChangeFrameBtn}
+              color="success"
               onClick={handleChangeFrame}
             >
-              Đổi khung
+              Đổi frame
+              <ImageIcon sx={{ ml: 1 }} />
             </Fab>
-          )}
+          }
+
+          <Fab
+            variant="extended"
+            color="error"
+            sx={{
+              position: "absolute",
+              top: "10.5vh",
+              right: "50px",
+            }}
+            disabled={!enableBtnShotAgain}
+            onClick={handleShotAgain}
+          >
+            Chụp lại
+            <CameraEnhanceIcon sx={{ ml: 1 }} />
+          </Fab>
+
           {/* canvas output */}
-          <canvas ref={canvasRef}></canvas>
+          <canvas ref={canvasRef} style={{ marginTop: "2vh" }}></canvas>
+
           <div id="bot-message">
             <img
               src={process.env.PUBLIC_URL + "/image/robot.png"}

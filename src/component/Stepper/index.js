@@ -61,16 +61,16 @@ function ColorlibStepIcon(props) {
   const { active, completed, className } = props;
 
   const icons = {
-    1: <SignLanguageIcon sx={{ scale: "1.4" }} />,
-    2: <ImageSearchIcon sx={{ scale: "1.4" }} />,
-    3: <MarkEmailReadIcon sx={{ scale: "1.4" }} />,
+    1: <SignLanguageIcon sx={{ scale: "1.2" }} />,
+    2: <ImageSearchIcon sx={{ scale: "1.2" }} />,
+    3: <MarkEmailReadIcon sx={{ scale: "1.2" }} />,
   };
 
   return (
     <ColorlibStepIconRoot
       ownerState={{ completed, active }}
       className={className}
-      sx={{ scale: "1.5" }}
+      sx={{ scale: "1.3" }}
     >
       {icons[String(props.icon)]}
     </ColorlibStepIconRoot>
@@ -83,7 +83,7 @@ const CustomStepper = ({ steps, activeStep }) => {
       alternativeLabel
       activeStep={activeStep}
       connector={<ColorlibConnector />}
-      style={{ marginTop: "3vh", width: "90%" }}
+      style={{ width: "90%" }}
     >
       {steps.map((label) => (
         <Step key={label}>
