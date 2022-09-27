@@ -51,8 +51,7 @@ function App() {
   const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
-    body:
-      "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
+    body: "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
     // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
     mode: 1,
     userList: [],
@@ -102,6 +101,8 @@ function App() {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
     let img = results.image;
+
+    // console.log(results.image);
     if (finalImageRef.current !== "") {
       captureImage.current.src = finalImageRef.current;
       img = captureImage.current;
@@ -199,6 +200,7 @@ function App() {
       modelComplexity: 1,
       minDetectionConfidence: 0.85,
       minTrackingConfidence: 0.85,
+      selfieMode: true,
     });
 
     hands.onResults(HandDetectionOnResults);
@@ -299,8 +301,7 @@ function App() {
           {
             ...messageOptions.current,
             header: "Xin chào!",
-            body:
-              "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
+            body: "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
             mode: 1,
           },
           550

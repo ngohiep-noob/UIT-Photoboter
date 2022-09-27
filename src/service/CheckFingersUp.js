@@ -46,7 +46,7 @@ const isFiveTipsUp = (multiHandLandmarks, width, height) => {
   }
 
 
-  console.log(fingersUp >= 4 && flag)
+  // console.log(fingersUp >= 4 && flag)
 
   return (fingersUp >= 4 && flag);
 }
