@@ -134,6 +134,8 @@ const MessageBox = (props) => {
     return "inline-flex";
   };
 
+  
+
   useEffect(() => {
     if (props.messageOptions.userList.length > 0) {
       // render default status
@@ -328,15 +330,7 @@ const MessageBox = (props) => {
             <div className="d-flex flex-column align-items-center">
               <p>{props.messageOptions.body}</p>
               {props.messageOptions.body ===
-                "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!" && (
-                <img
-                  src="https://c.tenor.com/QJP_QPYxoPsAAAAC/wave-panda.gif"
-                  alt="hand waving gif"
-                  style={{
-                    width: "200px",
-                  }}
-                />
-              )}
+                "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!"}
             </div>
           )}
           {props.messageOptions.mode === 3 && (

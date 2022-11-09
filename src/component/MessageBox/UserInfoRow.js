@@ -32,7 +32,7 @@ const UserInfo = (props, ref) => {
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const context = useContext(ProcessContextState).current;
-  const dispatch = useContext(ProcessContextDispatch)
+  const dispatch = useContext(ProcessContextDispatch);
   const cacheRef = useRef({
     email: props.userInfo.email,
     name: props.userInfo.name,
@@ -52,9 +52,8 @@ const UserInfo = (props, ref) => {
   };
 
   const HandleOpenEditClick = () => {
-    if(!editMode)
-    {
-        PlayAudio('inputEmail'); //instruction
+    if (!editMode) {
+      PlayAudio("inputEmail"); //instruction
     }
     setEditMode(!editMode);
     cacheRef.current = {
@@ -78,7 +77,7 @@ const UserInfo = (props, ref) => {
     if (!sending && (sendMailStatus === 0 || sendMailStatus === 2)) {
       const email = emailRef.current.getData();
       const name = nameRef.current.getData();
-      
+
       setEditMode(false); // turn off edit name and email
       if (
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) === false
@@ -95,7 +94,7 @@ const UserInfo = (props, ref) => {
       setSending(true); // toggle mail sending spinner
 
       // register and update BE model
-      HandleRegister(name + ' - ' + email, props.userInfo.avatar)
+      HandleRegister(name + " - " + email, props.userInfo.avatar);
 
       // call api to send mail
       return new Promise((resolve, reject) => {
@@ -145,103 +144,105 @@ const UserInfo = (props, ref) => {
   }, [editMode]);
 
   return (
-    <ListItem alignItems="flex-start">
-      <ListItemAvatar>
-        <Avatar
-          alt={props.userInfo.name}
-          src={props.userInfo.avatar}
-          sx={{ width: 56, height: 56 }}
+    <>
+      <ListItem alignItems="flex-start">
+        <ListItemAvatar>
+          <Avatar
+            alt={props.userInfo.name}
+            src={props.userInfo.avatar}
+            sx={{ width: 56, height: 56 }}
+          />
+        </ListItemAvatar>
+
+        <ListItemText
+          primary={
+            <React.Fragment>
+              <TextEdit
+                isGuest={props.isGuest}
+                index={props.index}
+                firstVal={props.userInfo.email}
+                ref={emailRef}
+                setNameField={(data) => nameRef.current.setData(data)}
+                label={"Email"}
+              />
+            </React.Fragment>
+          }
+          secondary={
+            <React.Fragment>
+              <TextEdit
+                isGuest={props.isGuest}
+                index={props.index}
+                firstVal={props.userInfo.name}
+                ref={nameRef}
+                label={"Name"}
+              />
+            </React.Fragment>
+          }
+          secondaryTypographyProps={{ component: "span" }}
+          sx={{ margin: "6px 15px 6px 15px" }}
         />
-      </ListItemAvatar>
 
-      <ListItemText
-        primary={
-          <React.Fragment>
-            <TextEdit
-              isGuest={props.isGuest}
-              index={props.index}
-              firstVal={props.userInfo.email}
-              ref={emailRef}
-              setNameField={(data) => nameRef.current.setData(data)}
-              label={"Email"}
-            />
-          </React.Fragment>
-        }
-        secondary={
-          <React.Fragment>
-            <TextEdit
-              isGuest={props.isGuest}
-              index={props.index}
-              firstVal={props.userInfo.name}
-              ref={nameRef}
-              label={"Name"}
-            />
-          </React.Fragment>
-        }
-        secondaryTypographyProps={{ component: "span" }}
-        sx={{ margin: "6px 15px 6px 15px" }}
-      />
+        <ListItemIcon>
+          {editMode && (
+            <Fab
+              color="error"
+              size="small"
+              onClick={HandleCloseEditClick}
+              sx={{ m: 1, position: "relative" }}
+            >
+              <ClearIcon />
+            </Fab>
+          )}
 
-      <ListItemIcon>
-        {editMode && (
           <Fab
-            color="error"
+            color="info"
             size="small"
-            onClick={HandleCloseEditClick}
+            disabled={sendMailStatus === 1 || sending} // send mail success or in sending process
+            onClick={HandleOpenEditClick}
             sx={{ m: 1, position: "relative" }}
           >
-            <ClearIcon />
+            {editMode ? <CheckIcon /> : <EditIcon />}
           </Fab>
-        )}
 
-        <Fab
-          color="info"
-          size="small"
-          disabled={sendMailStatus === 1 || sending} // send mail success or in sending process
-          onClick={HandleOpenEditClick}
-          sx={{ m: 1, position: "relative" }}
-        >
-          {editMode ? <CheckIcon /> : <EditIcon />}
-        </Fab>
-
-        <Box sx={{ m: 1, position: "relative" }}>
-          <Fab
-            disabled={sendMailStatus === 1} // send success
-            aria-label="save"
-            color={
-              sendMailStatus === 0
-                ? "warning"
-                : sendMailStatus === 2
-                ? "error"
-                : "success"
-            }
-            onClick={handleSendMail}
-            sx={{ ...buttonSx }}
-            size="small"
-          >
-            {sendMailStatus === 0 ? (
-              <EmailIcon />
-            ) : sendMailStatus === 1 ? (
-              <CheckIcon />
-            ) : (
-              <ReplayIcon />
+          <Box sx={{ m: 1, position: "relative" }}>
+            <Fab
+              disabled={sendMailStatus === 1} // send success
+              aria-label="save"
+              color={
+                sendMailStatus === 0
+                  ? "warning"
+                  : sendMailStatus === 2
+                  ? "error"
+                  : "success"
+              }
+              onClick={handleSendMail}
+              sx={{ ...buttonSx }}
+              size="small"
+            >
+              {sendMailStatus === 0 ? (
+                <EmailIcon />
+              ) : sendMailStatus === 1 ? (
+                <CheckIcon />
+              ) : (
+                <ReplayIcon />
+              )}
+            </Fab>
+            {sending && (
+              <CircularProgress
+                size={53}
+                sx={{
+                  color: green[500],
+                  position: "absolute",
+                  top: -6,
+                  left: -7,
+                  zIndex: 1,
+                }}
+              />
             )}
-          </Fab>
-          {sending && (
-            <CircularProgress
-              size={53}
-              sx={{
-                color: green[500],
-                position: "absolute",
-                top: -6,
-                left: -7,
-                zIndex: 1,
-              }}
-            />
-          )}
-        </Box>
-      </ListItemIcon>
-    </ListItem>
+          </Box>
+        </ListItemIcon>
+      </ListItem>
+    </>
   );
 };
 

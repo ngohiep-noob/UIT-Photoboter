@@ -17,6 +17,7 @@ import CustomStepper from "./component/Stepper";
 import FramesWindow from "./component/FramesWindow";
 import ImageIcon from "@mui/icons-material/Image";
 import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
+import KeyBoard from "./component/Keyboard";
 
 export const ProcessContextState = createContext();
 export const ProcessContextDispatch = createContext();
@@ -32,7 +33,8 @@ function App() {
   const canvasRef = useRef(null);
   const spinnerRef = useRef(null);
   const CountDownRef = useRef(null);
-  const ChangeFrame = useRef(null);
+  const ChangeFrameRef = useRef(null);
+  const KeyboardRef = useRef(null);
   // global variables
   const fiveTipsUpRef = useRef(false);
   const isHandlingShooting = useRef(false);
@@ -40,6 +42,7 @@ function App() {
   const recogizedImageRef = useRef("");
   const firstDrawRef = useRef(true);
   const sleepIdRef = useRef(null);
+
   const screenSize = useRef({
     width: 0,
     height: 0,
@@ -51,7 +54,8 @@ function App() {
   const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
-    body: "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
+    body:
+      "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
     // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
     mode: 1,
     userList: [],
@@ -78,7 +82,7 @@ function App() {
   const handleChangeFrame = () => {
     stopCheckHandRef.current = true;
     console.log("stop hand tracking!");
-    ChangeFrame.current.Open();
+    ChangeFrameRef.current.Open();
   };
 
   var camera = null;
@@ -181,7 +185,7 @@ function App() {
   useEffect(() => {
     const { innerWidth: w, innerHeight: h } = window;
     const minSize = Math.min(w, h);
-    console.log("Environment", process.env.NODE_ENV);
+    // console.log("Environment", process.env.NODE_ENV);
     if (minSize === w) {
       screenSize.current.width = w;
       screenSize.current.height = (3 / 4) * w;
@@ -209,6 +213,8 @@ function App() {
       typeof webCamRef.current !== "undefined" &&
       webCamRef.current !== null
     ) {
+      console.log(webCamRef.current);
+
       camera = new cam.Camera(webCamRef.current.video, {
         onFrame: async () => {
           await hands.send({ image: webCamRef.current.video });
@@ -219,6 +225,8 @@ function App() {
     }
     sleepIdRef.current = SetSleepTime(300);
     camera.start();
+
+    //test
   }, []);
 
   const FinishSession = (delay = 5000) => {
@@ -301,7 +309,8 @@ function App() {
           {
             ...messageOptions.current,
             header: "Xin chào!",
-            body: "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
+            body:
+              "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
             mode: 1,
           },
           550
@@ -366,7 +375,7 @@ function App() {
     stopCheckHandRef,
     breakPermission,
   });
-  const dispatch = {
+  let dispatch = {
     setBreakPermission: (cur) => {
       context.current.breakPermission.current = cur;
     },
@@ -401,6 +410,12 @@ function App() {
     setActiveStep,
     setDrawHandRef: (val) => {
       drawHandRef.current = val;
+    },
+    setShowKeyBoard: (val) => {
+      KeyboardRef.current.setShow(val);
+    },
+    setKeyBoardInputCallBack: (cb, curText) => {
+      KeyboardRef.current.setUpdateCb(cb, curText);
     },
   };
 
@@ -490,7 +505,9 @@ function App() {
             />
           }
 
-          {<FramesWindow ref={ChangeFrame} SetBannerUrl={setBannerUrl} />}
+          <KeyBoard ref={KeyboardRef} />
+
+          {<FramesWindow ref={ChangeFrameRef} SetBannerUrl={setBannerUrl} />}
         </div>
       </ProcessContextDispatch.Provider>
     </ProcessContextState.Provider>

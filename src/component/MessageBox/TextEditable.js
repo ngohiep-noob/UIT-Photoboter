@@ -86,7 +86,7 @@ const TextEditor = (props, ref) => {
     } else {
       dataList = context.messageOptions.current.userList;
     }
-    // console.log(dataList[props.index]);
+    //update static data in `context.messageOptions`
     if (props.label === "Name") {
       dataList[props.index].name = val;
     } else {
@@ -130,6 +130,16 @@ const TextEditor = (props, ref) => {
     }
   };
 
+  const HandleFocus = (type) => {
+    if (type === "in") {
+      dispatch.setShowKeyBoard(true);
+      dispatch.setKeyBoardInputCallBack(UpdateData, data);
+    }
+    if (type === "out") {
+      dispatch.setShowKeyBoard(false);
+    }
+  };
+
   return (
     <>
       {edit ? (
@@ -140,6 +150,8 @@ const TextEditor = (props, ref) => {
               id="name-input"
               label={props.label}
               onChange={HandleChange}
+              onFocus={() => HandleFocus("in")}
+              onBlur={() => HandleFocus("out")}
               size="small"
               value={data}
               sx={{ my: 1 }}
@@ -152,6 +164,8 @@ const TextEditor = (props, ref) => {
               id="email-input"
               label={props.label}
               onChange={HandleChange}
+              onFocus={() => HandleFocus("in")}
+              onBlur={() => HandleFocus("out")}
               size="small"
               value={data}
               sx={{ my: 1 }}
