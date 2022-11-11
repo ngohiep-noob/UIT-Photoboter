@@ -1,6 +1,5 @@
 import React, {
   forwardRef,
-  useContext,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -8,7 +7,6 @@ import React, {
 } from "react";
 import "react-simple-keyboard/build/css/index.css";
 import Keyboard from "react-simple-keyboard";
-import { ProcessContextDispatch } from "../../App";
 import { Fade } from "@mui/material";
 
 const KeyBoard = (props, ref) => {
@@ -17,7 +15,7 @@ const KeyBoard = (props, ref) => {
   const [layout, setLayout] = useState("default");
   const callback = useRef(null); // function to set state of input field
   const KeyboardRef = useRef(null);
-  const dispatch = useContext(ProcessContextDispatch);
+  // const dispatch = useContext(ProcessContextDispatch);
 
   useImperativeHandle(ref, () => ({
     setShow,
