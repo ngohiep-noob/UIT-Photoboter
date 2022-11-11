@@ -37,7 +37,7 @@ const KeyBoard = (props, ref) => {
 
   const onChange = (input) => {
     setInput(input);
-    console.log(input);
+    // console.log(input);
   };
 
   const updateInput = (value) => {
