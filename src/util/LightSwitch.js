@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const LightSwitch = async (mode) => {
-  const lightSwitchUrl = "http://api.mmlab.uit.edu.vn/iot";
+  const lightSwitchUrl = "https://api.mmlab.uit.edu.vn/iot";
 
   const config = {
     method: "get",
