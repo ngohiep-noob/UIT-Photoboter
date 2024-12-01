@@ -11,6 +11,7 @@ import CountDownScreen from "./component/CountDown/index";
 import MessageBox from "./component/MessageBox";
 import { SetSleepTime } from "./service/RedirectPage";
 import PlayAudio from "./util/PlayAudio";
+import LightSwitch from "./util/LightSwitch";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Fab } from "@mui/material";
 import CustomStepper from "./component/Stepper";
@@ -183,6 +184,8 @@ function App() {
   }, [bannerUrl]);
 
   useEffect(() => {
+    LightSwitch("on"); // turn on light
+
     const { innerWidth: w, innerHeight: h } = window;
     const minSize = Math.min(w, h);
     // console.log("Environment", process.env.NODE_ENV);
@@ -225,8 +228,6 @@ function App() {
     }
     sleepIdRef.current = SetSleepTime(300);
     camera.start();
-
-    //test
   }, []);
 
   const FinishSession = (delay = 5000) => {
@@ -444,6 +445,7 @@ function App() {
               left: "50px",
             }}
             href="http://map.mmlab.uit.edu.vn"
+            onClick={() => LightSwitch("off")}
           >
             <ArrowBackIosNewIcon sx={{ mr: 1 }} />
             Trở lại

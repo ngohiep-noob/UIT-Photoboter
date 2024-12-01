@@ -1,7 +1,10 @@
+import LightSwitch from "../util/LightSwitch";
+
 const SetSleepTime = (sec = 60, url = "http://map.mmlab.uit.edu.vn/") => {
   console.log("sleep");
   const id = window.setTimeout(() => {
     window.location.replace(url);
+    LightSwitch("off");
   }, sec * 1000);
   return id;
 };
