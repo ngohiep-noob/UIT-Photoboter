@@ -1,6 +1,7 @@
 const axios = require("axios");
 
 const GetNameById = async (username) => {
+  // const url = process.env.REACT_APP_PUBLIC_URL;
   const url =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"

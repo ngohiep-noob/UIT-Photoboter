@@ -163,6 +163,7 @@ const UserInfo = (props, ref) => {
                 firstVal={props.userInfo.email}
                 ref={emailRef}
                 setNameField={(data) => nameRef.current.setData(data)}
+                setDefaultMsg={props.setDefaultMsg}
                 label={"Email"}
               />
             </React.Fragment>
@@ -174,6 +175,7 @@ const UserInfo = (props, ref) => {
                 index={props.index}
                 firstVal={props.userInfo.name}
                 ref={nameRef}
+                setDefaultMsg={props.setDefaultMsg}
                 label={"Name"}
               />
             </React.Fragment>
@@ -206,7 +208,7 @@ const UserInfo = (props, ref) => {
 
           <Box sx={{ m: 1, position: "relative" }}>
             <Fab
-              disabled={sendMailStatus === 1} // send success
+              disabled={sendMailStatus === 1 || editMode} // send success
               aria-label="save"
               color={
                 sendMailStatus === 0
@@ -227,6 +229,7 @@ const UserInfo = (props, ref) => {
                 <ReplayIcon />
               )}
             </Fab>
+
             {sending && (
               <CircularProgress
                 size={53}

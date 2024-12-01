@@ -54,7 +54,8 @@ function App() {
   const breakProcessRef = useRef(false);
   const messageOptions = useRef({
     header: "Xin chào",
-    body: "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
+    body:
+      "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
     // mode 1: show notification | mode 2: show predictions list | mode 3: handle interception
     mode: 1,
     userList: [],
@@ -308,7 +309,8 @@ function App() {
           {
             ...messageOptions.current,
             header: "Xin chào!",
-            body: "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
+            body:
+              "Mình là UIT-Photoboter! Hãy lại gần camera và vẫy tay lên để chụp hình nhé!",
             mode: 1,
           },
           550

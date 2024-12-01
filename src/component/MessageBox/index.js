@@ -18,6 +18,7 @@ const MessageBox = (props) => {
   const [sending, setSending] = useState(false);
   // status: default - 0 | info - 1 | success - 2 | error - 3 | warning - 4
   const [sendingStatus, setSendingStatus] = useState(0);
+  const [defaultMsg, setDefaultMsg] = useState(null);
   const userInfoListRef = useRef(
     new Array(props.messageOptions.userList.length).fill(null)
   );
@@ -134,8 +135,6 @@ const MessageBox = (props) => {
     return "inline-flex";
   };
 
-  
-
   useEffect(() => {
     if (props.messageOptions.userList.length > 0) {
       // render default status
@@ -186,6 +185,7 @@ const MessageBox = (props) => {
                         key={index}
                         index={index}
                         setSendingStatus={setSendingStatus}
+                        setDefaultMsg={setDefaultMsg}
                         ref={(el) => (userInfoListRef.current[index] = el)}
                       />
                     ))}
@@ -218,6 +218,7 @@ const MessageBox = (props) => {
                         key={index}
                         index={index}
                         setSendingStatus={setSendingStatus}
+                        setDefaultMsg={setDefaultMsg}
                         ref={(el) => (GuestInfoListRef.current[index] = el)}
                       />
                     ))}
@@ -234,11 +235,11 @@ const MessageBox = (props) => {
                   {sendingStatus === 0 ? (
                     <Alert
                       variant="filled"
-                      severity="info"
+                      severity={defaultMsg ? "error" : "info"}
                       className="col-4"
                       style={{ width: "45%", marginRight: "60px" }}
                     >
-                      Hãy xem lại thông tin nhé!
+                      {defaultMsg || "Hãy xem lại thông tin nhé!"}
                     </Alert>
                   ) : sendingStatus === 1 ? (
                     <Alert

@@ -1,6 +1,7 @@
 import React, {
   forwardRef,
   useContext,
+  useEffect,
   useImperativeHandle,
   useState,
 } from "react";
@@ -17,6 +18,7 @@ import GetNameById from "../../util/GetNameByID";
 const AutoFillEmail = (props) => {
   // props = {getData, setData}
   const handleClick = async (e) => {
+    props.setDefaultMsg(null);
     let currentText = props.getData();
 
     if (currentText !== "" && currentText.includes("@")) {
@@ -24,16 +26,21 @@ const AutoFillEmail = (props) => {
     }
 
     if (e.target.innerText === "@uit") {
-      if (/^[\d]*[\d*]$/.test(currentText)) {
-        props.setData(currentText + "@gm.uit.edu.vn");
-      }
-      if (/^[\D]*[\D*]$/.test(currentText)) {
-        props.setData(currentText + "@uit.edu.vn");
-      }
       try {
         const res = await GetNameById(currentText);
         if (res.code === 1 && res.data.hoten !== null) {
           props.setNameField(res.data.hoten);
+        } else {
+          props.setDefaultMsg(
+            "Gmail UIT không tồn tại. Hãy kiểm tra lại thông tin!"
+          );
+          return;
+        }
+        if (/^[\d]*[\d*]$/.test(currentText)) {
+          props.setData(currentText + "@gm.uit.edu.vn");
+        }
+        if (/^[\D]*[\D*]$/.test(currentText)) {
+          props.setData(currentText + "@uit.edu.vn");
         }
       } catch (error) {
         console.log(error);
@@ -106,6 +113,11 @@ const TextEditor = (props, ref) => {
     setData(val);
   };
 
+  // on change edit mode, update data
+  useEffect(() => {
+    props.setDefaultMsg(null);
+  }, [edit]);
+
   useImperativeHandle(ref, () => ({
     toggleEdit: (value) => toggleEdit(value),
     getData: () => data,
@@ -113,18 +125,45 @@ const TextEditor = (props, ref) => {
   }));
 
   const HandleChange = async (e) => {
-    UpdateData(e.target.value);
+    const val = e.target.value;
+    const lastChar = val[val.length - 1];
+    props.setDefaultMsg(null);
+    UpdateData(val);
+    const isUitStudentMail = (addr) => /^\d{2}52\d{4,}$/.test(addr);
+    if (val.includes("@")) {
+      const mailDomain = val.split("@")[1];
+      const mailAddress = val.split("@")[0];
 
-    if (e.target.value[e.target.value.length - 1] === "@") {
-      const res = await GetNameById(e.target.value.split("@")[0]);
+      if (
+        isUitStudentMail(mailAddress) &&
+        "gm.uit.edu.vn".startsWith(mailDomain) === false
+      ) {
+        props.setDefaultMsg(
+          "Định dạng gmail UIT chưa đúng. Click vào @uit để tự động điền!"
+        );
+        return;
+      }
+    }
+
+    if (lastChar === "@") {
+      const mailAddress = val.split("@")[0];
+
+      const res = await GetNameById(mailAddress);
       if (res.code === 1 && res.data.hoten !== null) {
         props.setNameField(res.data.hoten);
-        const currentText = e.target.value.split("@")[0];
-        if (/^[\d]*[\d*]$/.test(currentText)) {
-          setData(currentText + "@gm.uit.edu.vn");
+
+        if (isUitStudentMail(mailAddress)) {
+          setData(mailAddress + "@gm.uit.edu.vn");
         }
-        if (/^[\D]*[\D*]$/.test(currentText)) {
-          setData(currentText + "@uit.edu.vn");
+        if (/^[\D]*[\D*]$/.test(mailAddress)) {
+          setData(mailAddress + "@uit.edu.vn");
+        }
+      } else {
+        // if email starts with \d{2}52, then push messages
+        if (isUitStudentMail(mailAddress)) {
+          props.setDefaultMsg(
+            "Có vẻ bạn đã nhập sai mã số sinh viên. Hãy kiểm tra lại!"
+          );
         }
       }
     }
@@ -176,6 +215,7 @@ const TextEditor = (props, ref) => {
                     setData={UpdateData}
                     getData={() => data}
                     setNameField={props.setNameField}
+                    setDefaultMsg={props.setDefaultMsg}
                   />
                 </InputAdornment>
               }
